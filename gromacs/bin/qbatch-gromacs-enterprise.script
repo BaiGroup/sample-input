@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=0
+#SBATCH --time=96:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=E5_2650v4
+
+#######################################################################
+module purge
+module use --append /share/apps/spack/share/spack/modules/linux-centos6-x86_64
+module add intel/2017.4.196
+module add binutils/2.27
+module add gcc-7.2.0-gcc-4.4.7-d3wacuq
+
+MPIRUN='mpirun -np'
+BASEDIR='/share/apps/gromacs-2016.6/gcc-double-impi-fftw'
+export PATH="$BASEDIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
+PROG="$BASEDIR/bin/gmx_mpi_d"
+
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+#######################################################################
+nprocperjob=2
+export FILELOG HOSTS MPIRUN PROG nprocperjob
+
+inode=-1
+ijob=0
+((njobspernode=nprocpernode/nprocperjob))
+
+#>>>BEGIN<<<
+cd "$ROOT/$job_dir"
+[ $((ijob++ % njobspernode)) -eq 0 ] && ((inode++))
+HOSTS=${NODE[inode]} MPIRUN='mpirun -hosts ${NODE[inode]} -np' ./sub-gromacs.script 2>stderr 1>stdout &
+
+#>>>END<<<
+
+wait
+
+exit 0

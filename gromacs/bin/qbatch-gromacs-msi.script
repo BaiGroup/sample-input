@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+#PBS -l nodes=1:ppn=24,walltime=96:00:00
+#PBS -N name
+#PBS -e stderr-$PBS_JOBID
+#PBS -o stdout-$PBS_JOBID
+
+#######################################################################
+module rm python intel impi ompi
+module add intel/cluster/2019
+
+MPIRUN='mpirun -np'
+
+if [[ $(hostname) =~ node* ]]; then
+    # Itasca
+    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl-itasca"
+else
+    # Mesabi
+    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl"
+fi
+
+export PATH="$BASEDIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
+PROG="$BASEDIR/bin/gmx_mpi_d"
+
+source util-pbs.sh
+#######################################################################
+nprocperjob=2
+export FILELOG HOSTS MPIRUN PROG nprocperjob
+
+inode=-1
+ijob=0
+((njobspernode=nprocpernode/nprocperjob))
+
+#>>>BEGIN<<<
+cd "$ROOT/$job_dir"
+[ $((ijob++ % njobspernode)) -eq 0 ] && ((inode++))
+HOSTS=${NODE[inode]} MPIRUN="mpirun -hosts ${NODE[inode]} -np" ./sub-gromacs.script 2>stderr 1>stdout &
+
+#>>>END<<<
+
+wait
+
+exit 0

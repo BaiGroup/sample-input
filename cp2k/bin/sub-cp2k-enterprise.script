@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=0
+#SBATCH --time=96:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=E5_2650v4
+
+#######################################################################
+module purge
+module use --append /share/apps/spack/share/spack/modules/linux-centos6-x86_64
+module add binutils-2.28-gcc-4.4.7-oh67qvy
+module add gcc-6.4.0-gcc-4.4.7-bx5dbff
+module load intel-mkl-2018.0.128-gcc-6.4.0-ghtmbts
+module load intel-mpi-2018.0.128-gcc-6.4.0-hfjbyb3
+module load elpa-2016.05.004-gcc-6.4.0-bduclky
+module load libint-1.1.6-gcc-6.4.0-c44lrpe
+module load libxc-3.0.0-gcc-6.4.0-vrwwql4
+module load metis-5.1.0-gcc-6.4.0-bhu5gxn
+module load parmetis-4.0.3-gcc-6.4.0-aagsr6g
+module load superlu-dist-5.2.2-gcc-6.4.0-hxuwucd
+module load pexsi-0.10.2-gcc-6.4.0-tqpnqfi
+module load gsl-2.4-gcc-6.4.0-i2z4lfm
+module load zlib-1.2.11-gcc-6.4.0-wtdtf4d
+module load plumed-2.3.3-gcc-6.4.0-hukim5r
+
+MPIRUN='mpirun -np'
+PROG='/share/apps/spack/opt/spack/linux-centos6-x86_64/gcc-6.4.0/cp2k-5.1-i7wiv3vimwot7z45uqx2w3kuquzcanu4/bin/cp2k.popt'
+export REAL_ELPA_KERNEL='REAL_ELPA_KERNEL_AVX2_BLOCK2'
+
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+#######################################################################
+# rsync_options='--exclude=CHG --exclude=CHGCAR --exclude=WAVECAR'
+# ORIGINAL_ROOT="$ROOT"
+# ROOT="/state/partition1/$USER/$$"
+# mkdir -p $ROOT
+# rsync -rltDz --stats --partial --delete --delete-excluded --force --exclude=std???.* $ORIGINAL_ROOT/ $ROOT/ &> /dev/null
+
+# kill_periodic_sync() {
+#   echo -n 'Killing background sync...'
+#   kill $sync_pid
+#   wait $sync_pid 2>/dev/null
+#   rsync -rltDz --stats --partial $rsync_options $ROOT/ $ORIGINAL_ROOT/ &> /dev/null
+#   rm -rf $ROOT
+#   echo '  killed.'
+#   echo
+# }
+
+# periodic_sync() {
+#   local _sleeptime=300
+#   [ $# -gt 0 ] && _sleeptime="$1"
+
+#   while true; do
+#     sleep $_sleeptime
+#     rsync -rltDz --stats --partial $rsync_options $ROOT/ $ORIGINAL_ROOT/ &> /dev/null
+#   done
+# }
+
+# periodic_sync &
+# sync_pid=$!
+# trap kill_periodic_sync EXIT
+#######################################################################
+source sub-cp2k.script
+
+exit 0

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#PBS -l nodes=1:ppn=24,walltime=96:00:00
+#PBS -N name
+#PBS -e stderr-$PBS_JOBID
+#PBS -o stdout-$PBS_JOBID
+
+#######################################################################
+module rm binutils cmake emacs gcc impi intel python spack
+module use --append "$HOME/tools/spack/share/spack/modules/linux-centos6-x86_64"
+module add binutils/2.28 gcc/7.2.0
+module add impi/2018/release_singlethread
+
+MPIRUN='mpirun -np'
+
+if [[ $(hostname) =~ node* ]]; then
+    # Itasca
+    module load intel-mkl-2018.1.163-gcc-7.2.0.itasca-de5e6k3
+    module load elpa-2016.05.004-gcc-7.2.0.itasca-dinqrbp
+    module load libint-1.1.6-gcc-7.2.0.itasca-7mk7m3j
+    module load libxc-3.0.0-gcc-7.2.0.itasca-tukp36k
+    module load metis-5.1.0-gcc-7.2.0.itasca-swjwxf3
+    module load parmetis-4.0.3-gcc-7.2.0.itasca-jrlwjbg
+    module load superlu-dist-5.2.2-gcc-7.2.0.itasca-rqtpkdy
+    module load pexsi-0.10.2-gcc-7.2.0.itasca-xzfp5ba
+    module load gsl-2.4-gcc-7.2.0.itasca-zmpecmi
+    module load zlib-1.2.11-gcc-7.2.0.itasca-2ftpncr
+    module load plumed-2.3.3-gcc-7.2.0.itasca-rzfr4ob
+    PROG="$HOME/tools/cp2k-5.1/exe/linux-centos6-nehalem-gcc-mkl/cp2k.popt"
+    export REAL_ELPA_KERNEL='REAL_ELPA_KERNEL_SSE_BLOCK2'
+else
+    # Mesabi
+    module load intel-mkl-2018.1.163-gcc-7.2.0.itasca-de5e6k3
+    module load elpa-2016.05.004-gcc-7.2.0-ryghj3k
+    module load libint-1.1.6-gcc-7.2.0-pmava72
+    module load libxc-3.0.0-gcc-7.2.0-gi6qj3b
+    module load metis-5.1.0-gcc-7.2.0-husivjb
+    module load parmetis-4.0.3-gcc-7.2.0-vvuanzw
+    module load superlu-dist-5.2.2-gcc-7.2.0-56ikk24
+    module load pexsi-0.10.2-gcc-7.2.0-oybtrbg
+    module load gsl-2.4-gcc-7.2.0-sxcohpt
+    module load zlib-1.2.11-gcc-7.2.0-r62jcsv
+    module load plumed-2.3.3-gcc-7.2.0-zicozvm
+    PROG="$HOME/tools/cp2k-5.1/exe/linux-centos6-haswell-gcc-mkl/cp2k.popt"
+    export REAL_ELPA_KERNEL='REAL_ELPA_KERNEL_AVX2_BLOCK2'
+fi
+
+source util-pbs.sh
+source sub-cp2k.script
+
+exit 0
