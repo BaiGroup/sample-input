@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+#######################################################################
+FILELOG=log
+BUFFER_TIME=900 # in seconds
+if [ -z "$nprocperjob" ]; then
+    nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+    nprocperjob=$((nnodeperjob*nprocpernode))
+    source util.sh
+fi
+HOSTS=${HOSTS// /,}
+#######################################################################
+run_cp2k() {
+    local FCUR="$1"
+    echo "$FCUR: " >> $FILELOG
+    [ -e "param.$FCUR" ] && ln -sf "param.$FCUR" param.inc
+
+    [ -e 'cp2k-1.restart' ] && cp -f cp2k-1.restart cp2k-prev.restart
+    [ -e 'cp2k-1.ener' ] && mv -f cp2k-1.ener cp2k-prev.ener
+    for t in frc pos vel; do
+        [ -e "cp2k-$t-1.xyz" ] && mv -f cp2k-$t-1.xyz cp2k-$t-prev.xyz
+    done
+
+    local _time_to_exit=$((WALLTIME-BUFFER_TIME-SECONDS))
+    if [ $_time_to_exit -gt 0 ]; then
+      echo "WALLTIME set to ${_time_to_exit} seconds"
+      echo "@SET WALLTIME ${_time_to_exit}" > walltime.inc
+    fi
+
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG -i main.inp -o $FCUR.out || exit -1
+    cp -a cp2k-1.restart $FCUR.restart
+    mv -f cp2k-1.ener $FCUR.ener
+    for t in frc pos vel; do
+        mv -f cp2k-$t-1.xyz $FCUR-$t.xyz
+    done
+}
+
+get_next_backup() {
+    local _suffix="$1"
+    local _imax=0
+    local _i
+    for f in "${_suffix}"*.out; do
+        if [ -e "$f" ]; then
+            _i="${f#${_suffix}}"
+            _i="${_i%.out}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $((_imax+1))
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $(pwd)"
+echo "MPIRUN: $MPIRUN $nprocperjob"
+echo "Executable: $PROG"
+echo "Hosts: $HOSTS"
+echo
+
+if [ -e 'jobs' ]; then
+    for stage in $(cat jobs); do
+        run_cp2k $stage
+    done
+else
+    for stage in prod equil; do
+        i=$(get_next_backup "$stage")
+        [ "$i" -ne 1 ] && break
+    done
+    run_cp2k "${stage}${i}"
+fi

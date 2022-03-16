@@ -1,0 +1,285 @@
+@INCLUDE 'param.inc'
+@SET XCFUNC PBE
+@SET PROJECT cp2k
+
+&GLOBAL
+  PROJECT ${PROJECT}
+  RUN_TYPE ${RUNTYPE}
+  PRINT_LEVEL low
+  FLUSH_SHOULD_FLUSH
+  WALLTIME 83000
+  PREFERRED_FFT_LIBRARY FFTW
+  PREFERRED_DIAG_LIBRARY ELPA
+  FFTW_PLAN_TYPE PATIENT
+&END GLOBAL
+
+&EXT_RESTART
+  RESTART_DEFAULT F
+@IF ( ${RESTART} == TRUE )
+  RESTART_FILE_NAME ./${PROJECT}-1.restart
+@ENDIF
+  RESTART_POS T
+  RESTART_CELL T
+  RESTART_COUNTERS T
+  RESTART_VEL T
+#  RESTART_AVERAGES T
+  RESTART_THERMOSTAT T
+  RESTART_BAROSTAT T
+  RESTART_BAROSTAT_THERMOSTAT T
+#  RESTART_CONSTRAINT T
+&END
+
+&MOTION
+  &MD
+    ENSEMBLE NVT # NPT_F
+    STEPS ${STEPS}
+    TIMESTEP ${TIMESTEP} # fs
+    TEMPERATURE ${TEMPERATURE}
+
+    &THERMOSTAT
+      REGION MASSIVE
+      TYPE CSVR
+      &NOSE
+        LENGTH 3
+        YOSHIDA 3
+        TIMECON 100 # fs
+        MTS 2
+      &END NOSE
+
+      &CSVR
+        TIMECON 20 # 100 fs
+      &END CSVR
+    &END THERMOSTAT
+
+    &BAROSTAT
+      PRESSURE ${PRESSURE} # bar
+      TIMECON 20 # 100 fs
+    &END BAROSTAT
+
+    &PRINT
+      &ENERGY
+        ADD_LAST NUMERIC
+        &EACH
+          MD 1
+        &END
+      &END
+    &END PRINT
+  &END MD
+
+  &GEO_OPT
+    TYPE MINIMIZATION
+    OPTIMIZER  LBFGS
+    STEP_START_VAL 0
+    MAX_ITER ${STEPS}
+    # 1 hartree/bohr = 27.2107/0.5292 = 51.42 eV/Ang
+    # 0.05 eV/Ang = 0.972E-3 hartree/bohr
+    MAX_DR ${MAX_DR} # bohr
+    RMS_DR ${RMS_DR} # bohr
+    MAX_FORCE ${MAX_FORCE} # hartree/bohr
+    RMS_FORCE ${RMS_FORCE} # hartree/bohr
+    &CG
+      &LINE_SEARCH
+        TYPE 2PNT
+      &END LINE_SEARCH
+    &END CG
+  &END GEO_OPT
+
+  &CELL_OPT
+    TYPE DIRECT_CELL_OPT # GEO_OPT MD
+    OPTIMIZER  CG
+    STEP_START_VAL 0
+    MAX_ITER ${STEPS}
+    EXTERNAL_PRESSURE ${PRESSURE}
+    PRESSURE_TOLERANCE 1.0
+    MAX_DR ${MAX_DR}
+    RMS_DR ${RMS_DR}
+    MAX_FORCE ${MAX_FORCE}
+    RMS_FORCE ${RMS_FORCE}
+    &CG
+      &LINE_SEARCH
+        TYPE 2PNT
+      &END LINE_SEARCH
+    &END CG
+  &END CELL_OPT
+
+  &PRINT
+    &RESTART
+      LOG_PRINT_KEY T
+      ADD_LAST NUMERIC
+      BACKUP_COPIES 1
+      &EACH
+        MD 1
+        GEO_OPT 1
+        CELL_OPT 1
+      &END
+    &END
+
+    &TRAJECTORY
+      LOG_PRINT_KEY T
+      ADD_LAST NUMERIC
+      &EACH
+        MD 1
+        GEO_OPT 1
+        CELL_OPT 1
+      &END
+    &END
+
+    &VELOCITIES
+      LOG_PRINT_KEY T
+      ADD_LAST NUMERIC
+      &EACH
+        MD 1
+        GEO_OPT 1
+        CELL_OPT 1
+      &END
+    &END
+
+    &FORCES
+      LOG_PRINT_KEY T
+      ADD_LAST NUMERIC
+      &EACH
+        MD 1
+        GEO_OPT 1
+        CELL_OPT 1
+      &END
+    &END
+  &END
+&END MOTION
+
+&FORCE_EVAL
+  METHOD QS
+#  STRESS_TENSOR NUMERICAL
+
+  &DFT
+    BASIS_SET_FILE_NAME BASIS_MOLOPT
+    POTENTIAL_FILE_NAME GTH_POTENTIALS
+@IF ( ${RESTART} == TRUE )
+    WFN_RESTART_FILE_NAME ./${PROJECT}-RESTART.wfn
+@ENDIF
+    CHARGE 0
+#    MULTIPLICITY 1
+    UKS .TRUE.
+
+    &MGRID
+      CUTOFF 320
+      REL_CUTOFF [Ry] 60
+      NGRIDS 5
+#      COMMENSURATE
+    &END MGRID
+
+    # &POISSON
+    #   PERIODIC XYZ
+    #   POISSON_SOLVER PERIODIC # MT MULTIPOLE WAVELET
+    # &END POISSON
+
+    &QS
+      EPS_DEFAULT 1.0E-10
+@IF ( ${RUNTYPE} == MD )
+      EXTRAPOLATION ASPC # PS USE_PREV_WF
+@ENDIF
+@IF ( ${RUNTYPE} == GEO_OPT )
+      EXTRAPOLATION PS
+@ENDIF
+@IF ( ${RUNTYPE} == CELL_OPT )
+      EXTRAPOLATION PS
+@ENDIF
+      EXTRAPOLATION_ORDER 3
+#      MAP_CONSISTENT
+      METHOD GPW
+    &END QS
+
+    &SCF
+      SCF_GUESS RESTART
+      EPS_SCF ${EPS_SCF}
+      MAX_SCF ${MAX_SCF}
+#      MAX_DIIS  7
+
+      &OUTER_SCF
+        EPS_SCF ${EPS_SCF}
+        MAX_SCF ${MAX_SCF}
+      &END OUTER_SCF
+
+@IF ( ${METAL} == FALSE )
+      &OT
+        MINIMIZER DIIS  # CG
+        PRECONDITIONER FULL_SINGLE_INVERSE  # FULL_ALL  # FULL_KINETIC
+      &END OT
+@ENDIF
+@IF ( ${METAL} == TRUE )
+      ADDED_MOS 800
+      CHOLESKY INVERSE
+
+      &DIAGONALIZATION
+        ALGORITHM STANDARD
+      &END DIAGONALIZATION
+
+      &MIXING
+        METHOD BROYDEN_MIXING
+        ALPHA 0.1
+        BETA 1.5
+        NBROYDEN 8
+      &END
+
+      &SMEAR ON
+        METHOD FERMI_DIRAC
+        ELECTRONIC_TEMPERATURE [K] 400
+      &END SMEAR
+@ENDIF
+
+      &PRINT
+        &RESTART
+          LOG_PRINT_KEY T
+          ADD_LAST NUMERIC
+          BACKUP_COPIES 1
+          &EACH
+            QS_SCF 0
+            MD 1
+            GEO_OPT 1
+            CELL_OPT 1
+          &END EACH
+        &END RESTART
+      &END PRINT
+    &END SCF
+
+    &XC
+      &VDW_POTENTIAL
+        POTENTIAL_TYPE PAIR_POTENTIAL
+        &PAIR_POTENTIAL
+          TYPE DFTD3(BJ)
+          PARAMETER_FILE_NAME dftd3.dat
+          REFERENCE_FUNCTIONAL ${XCFUNC}
+          # R_CUTOFF 40.0
+          # LONG_RANGE_CORRECTION .TRUE.
+          # CALCULATE_C9_TERM .TRUE.
+          # REFERENCE_C9_TERM .TRUE.
+          # EPS_CN 1.0E-6
+        &END PAIR_POTENTIAL
+      &END VDW_POTENTIAL
+
+      &XC_FUNCTIONAL ${XCFUNC}
+@IF ( ${XCFUNC} == PBE )
+        &PBE T
+        &END PBE
+@ENDIF
+      &END XC_FUNCTIONAL
+
+      # &XC_GRID
+      #   XC_DERIV SPLINE2
+      #   XC_SMOOTH_RHO NONE
+      # &END XC_GRID
+    &END XC
+  &END DFT
+
+  &SUBSYS
+    &CELL
+      @INCLUDE 'cell.inc'
+      PERIODIC XYZ
+    &END CELL
+
+    @INCLUDE 'elements.inc'
+
+    &COORD
+      @INCLUDE 'topology.xyz'
+    &END COORD
+  &END SUBSYS
+&END FORCE_EVAL

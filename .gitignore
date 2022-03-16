@@ -1,0 +1,15 @@
+gaussian/geo-opt
+gaussian/torsion-scan
+gromacs/Ar
+gromacs/CH4-MFI
+gromacs/nC6-SPP
+gromacs/trappe.ff
+lammps/MIL-101-PC-LiCl
+lammps/nC18-rutile110
+lammps/nC18-tZrO2
+packmol/
+topmon/adsorption
+topmon/rxmc
+topmon/TS
+topmon/VLE
+vasp/geometry-optimization

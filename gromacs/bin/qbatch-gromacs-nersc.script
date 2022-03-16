@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=32
+##SBATCH --mem=0
+#SBATCH --time=96:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=regular
+#SBATCH --license=SCRATCH
+
+#######################################################################
+module rm python craype-mic-knl craype-haswell cray-mpich PrgEnv-intel
+module add PrgEnv-intel/6.0.5 cray-mpich/7.7.6
+module rm cray-libsci
+
+MPIRUN='srun -c 1 --cpu_bind=cores -n'
+
+if lscpu | grep -q 'Xeon Phi' &> /dev/null; then
+    # knl
+    module add craype-mic-knl
+    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl-knl"
+elif lscpu | grep -q ' v3 @ ' &> /dev/null; then
+    # cori
+    module add craype-haswell
+    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl"
+else
+    # edison
+    :
+fi
+
+export PATH="$BASEDIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
+PROG="$BASEDIR/bin/gmx_mpi_d"
+
+if [ "$HOSTS" ]; then
+  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+else
+  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
+  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
+  #echo ${NODE[@]} > tmp-$PBS_JOBID
+  HOSTS=${NODE[@]}
+  ROOT=$SLURM_SUBMIT_DIR
+  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK))
+fi
+#######################################################################
+cd $ROOT
+source util.sh
+nprocperjob=2
+export MPIRUN PROG HOSTS nprocpernode
+
+inode=-1
+ijob=0
+((njobspernode=nprocpernode/nprocperjob))
+
+#>>>BEGIN<<<
+cd "$ROOT/$job_dir"
+[ $((ijob++ % njobspernode)) -eq 0 ] && ((inode++))
+HOSTS=${NODE[inode]} MPIRUN='srun -c 1 --cpu_bind=cores -n' ./sub-gromacs.script 2>stderr 1>stdout &
+
+#>>>END<<<
+
+wait
+
+exit 0

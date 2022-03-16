@@ -1,0 +1,81 @@
+Host rockfish marcc
+  Hostname login.%h.jhu.edu
+  User CHANGE_THIS
+Host *.jhu.edu
+  User CHANGE_THIS
+Host anvil
+  Hostname %h.rcac.purdue.edu
+  User CHANGE_THIS
+Host *.rcac.purdue.edu
+  User CHANGE_THIS
+Host bridges bridges2
+  Hostname %h.psc.edu
+  User CHANGE_THIS
+Host *.psc.edu
+  User CHANGE_THIS
+Host comet
+  Hostname %h.sdsc.edu
+  User CHANGE_THIS
+Host expanse
+  Hostname login.expanse.sdsc.edu
+  User CHANGE_THIS
+Host *.sdsc.edu
+  User CHANGE_THIS
+Host darwin darwin-storage
+  Hostname %h.hpc.udel.edu
+  User CHANGE_THIS
+Host *.hpc.udel.edu
+  User CHANGE_THIS
+Host kyric kxc kxc-login?
+  Hostname kxc.ccs.uky.edu
+  User CHANGE_THIS
+Host *.ccs.uky.edu
+  User CHANGE_THIS
+Host unity
+  HostName unity.rc.umass.edu
+  User CHANGE_THIS
+Host *.rc.umass.edu
+  User CHANGE_THIS
+Host stampede2
+  Hostname %h.tacc.utexas.edu
+  User CHANGE_THIS
+  ControlPersist 168h
+Host *.tacc.utexas.edu
+  User CHANGE_THIS
+  ControlPersist 168h
+Host cetus mira vesta
+  HostName %h.alcf.anl.gov
+  User CHANGE_THIS
+Host *.alcf.anl.gov
+  User CHANGE_THIS
+Host cori edison nxcloud??
+  HostName %h.nersc.gov
+  User CHANGE_THIS
+  ControlPersist 168h
+  IdentityFile ~/.ssh/nersc
+Host *.nersc.gov
+  User CHANGE_THIS
+  ControlPersist 168h
+  IdentityFile ~/.ssh/nersc
+Host aurora cascade glogin*
+  HostName %h.emsl.pnl.gov
+  User CHANGE_THIS
+Host *.emsl.pnl.gov
+  User CHANGE_THIS
+Host bitbucket.org
+  ControlPath none
+Host baigroup
+  HostName baigroup.duckdns.org
+  User CHANGE_THIS
+Host ghpcc??
+  HostName %h.umassrc.org
+  User CHANGE_THIS
+Host *.umassrc.org
+  User CHANGE_THIS
+Host *
+  ServerAliveInterval 300
+  ServerAliveCountMax 3
+  TCPKeepAlive no
+  ControlMaster auto
+  ControlPath ~/mux-%L-%r@%h:%p
+  ControlPersist 30m

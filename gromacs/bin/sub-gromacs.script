@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+#######################################################################
+FILELOG=log
+if [ -z "$nprocperjob" ]; then
+    nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+    nprocperjob=$((nnodeperjob*nprocpernode))
+    source util.sh
+fi
+HOSTS=${HOSTS// /,}
+#######################################################################
+run_gromacs() {
+    local FCUR=$1
+    echo "$FCUR: " >> $FILELOG
+    #export OMP_NUM_THREADS=$nprocpernode
+    #/usr/bin/time -ao $FILELOG $MPIRUN $nnodeperjob $PROG mdrun -ntomp $nprocpernode -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG mdrun -ntomp 1 -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+}
+
+get_latest_tpr() {
+    local _prefix="$1"
+    local _suffix=".tpr"
+    local _imax=0
+    local _i
+    for f in "${_prefix}"*"${_suffix}"; do
+        if [ -e "$f" ]; then
+            _i="${f/${_prefix}/}"
+            _i="${_i%${_suffix}}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $_imax
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $(pwd)"
+echo "MPIRUN: $MPIRUN"
+echo "Executable: $PROG"
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob; SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE"
+echo "Hosts: $HOSTS"
+echo
+
+if [ -e 'jobs' ]; then
+    for stage in $(cat jobs); do
+        run_gromacs $stage
+    done
+else
+    for stage in prod equil; do
+        i=$(get_latest_tpr "$stage")
+        [ "$i" -ne 0 ] && break
+    done
+    run_gromacs "${stage}${i}"
+fi

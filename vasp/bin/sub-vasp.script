@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+#######################################################################
+VDWFILE="$(dirname $PROG)/vdw_kernel.bindat"
+FILELOG=log
+BUFFER_TIME=900 # in seconds
+nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+nprocperjob=$((nnodeperjob*nprocpernode))
+HOSTS=${HOSTS// /,}
+#######################################################################
+clean_up_last_run() {
+  local _i
+  if [ -e NEWMODECAR ]; then
+    _i=$(get_next_backup)
+    mkdir RUN$_i
+    cp -a NEWMODECAR CENTCAR CONTCAR POSCAR MODECAR OUTCAR OSZICAR DIMCAR XDATCAR vaspout RUN$_i/
+    [ -s NEWMODECAR ] && mv NEWMODECAR MODECAR
+    [ -s CENTCAR ] && mv CENTCAR POSCAR
+    rm CONTCAR
+  elif [ -e 01/CONTCAR ]; then
+    _i=$(get_next_backup)
+    mkdir RUN$_i
+    for d in ??; do
+      mkdir RUN$_i/$d
+      cp -a $d/CONTCAR $d/POSCAR $d/OUTCAR $d/OSZICAR $d/XDATCAR RUN$_i/$d/
+    done
+    cp -a vaspout RUN$_i/
+    find ?? -iname "CONTCAR" -execdir cp -a CONTCAR POSCAR \;
+  elif [ -e CONTCAR ]; then
+    _i=$(get_next_backup)
+    mkdir RUN$_i
+    cp -a CONTCAR POSCAR OUTCAR OSZICAR XDATCAR vaspout RUN$_i/
+    [ -s CONTCAR ] && mv CONTCAR POSCAR
+  fi
+}
+
+copy_files_from_prev_step() {
+  if [ -d "$PREV" ] && [ ! -e vaspout ]; then
+    ln -sf $PREV/CONTCAR POSCAR
+    [ -s $PREV/CENTCAR ] && ln -sf $PREV/CENTCAR POSCAR
+    [ -s $PREV/NEWMODECAR ] && ln -sf $PREV/NEWMODECAR MODECAR
+    local _fn
+    for _fn in WAVECAR CHGCAR CHG; do
+      mv -f $PREV/$_fn .
+    done
+  fi
+}
+
+get_next_backup() {
+  local _imax=0
+  local _i
+  for d in RUN*; do
+    if [ -e "$d" ]; then
+      _i="${d/RUN/}"
+      [ "$_i" -gt "$_imax" ] && _imax="$_i"
+    fi
+  done
+  echo $((_imax+1))
+}
+
+graceful_exit() {
+  local _time_to_exit=$((WALLTIME-BUFFER_TIME-SECONDS))
+  if [ $_time_to_exit -gt 0 ]; then
+    echo "Creating STOPCAR in ${_time_to_exit} seconds in $(pwd)"
+    sleep ${_time_to_exit}
+    echo "Now signalling vasp to stop."
+    echo "LSTOP = .TRUE." > STOPCAR
+  fi
+}
+
+run_vasp() {
+  rm -f STOPCAR
+  ln -sf $VDWFILE .
+  set_incar_parallelization
+  #graceful_exit &
+  #local _pid=$!
+  gamma=$(gawk '(NR==4)&&($1==1)&&($2==1)&&($3==1){print "_gamma"}' KPOINTS)
+  /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob "${PROG}${gamma}" 1>vaspout 2> vasperr
+  /bin/touch "DONE"
+  #kill -- -$_pid
+  #wait $_pid 2>/dev/null
+}
+
+set_incar_parallelization() {
+  IMAGES="$(grep IMAGES INCAR | tail -n 1 | cut -d '=' -f 2)"
+  [ -z "$IMAGES" ] && IMAGES=1
+  local _NPAR=${NPAR:-$(echo "sqrt($nprocperjob/$IMAGES)" | bc | cut -d'.' -f 1)}
+  if [ $(echo "$_NPAR < 1" | bc) -eq 1 ]; then
+    _NPAR=1
+  else
+    while [ $(((nprocperjob/IMAGES)%_NPAR)) -ne 0 ]; do
+      ((_NPAR--))
+    done
+  fi
+
+  sed -i -E INCAR \
+      -e "s/(NSIM *= *).*/\1$nprocpernode/" \
+      -e "s/(NPAR *= *).*/\1$_NPAR/" \
+      -e "s/(LPLANE *= *).*/\1.TRUE./" \
+      -e "s/(LSCALU *= *).*/\1.FALSE./"
+
+  grep -q 'LSCALAPACK' INCAR || echo '  LSCALAPACK = .FALSE.' >> INCAR
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $ROOT"
+echo "Executable: $PROG"
+echo "MPIRUN: $MPIRUN"
+echo "Hosts: $HOSTS"
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
+echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
+echo
+
+[ -f ./util.sh ] && source util.sh
+
+PREV=NON_EXISTENT
+
+for ((irun=1; 1 ; irun++)); do
+    FCUR="$ROOT/STEP$irun"
+    if [ ! -d "$FCUR" ]; then
+        [ $irun -gt 1 ] && break
+        FCUR="$ROOT"
+    fi
+
+    cd "$FCUR"
+
+    copy_files_from_prev_step
+
+    PREV=$(pwd)
+
+    [ -e "DONE" ] && continue
+
+    clean_up_last_run
+
+    run_vasp
+done
+
+#rm WAVECAR CHGCAR CHG

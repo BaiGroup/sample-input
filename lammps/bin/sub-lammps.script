@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+#######################################################################
+FILELOG=log
+nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+nprocperjob=$((nnodeperjob*nprocpernode))
+HOSTS=${HOSTS// /,}
+#######################################################################
+run_lammps() {
+    local FCUR=$1
+    echo "$FCUR: " >> $FILELOG
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG -echo screen -log none -screen screen -suffix opt -in main.lmp || exit -1
+    cp -f restart.2 restart
+    mv -f restart.2 restart.$FCUR
+    [ -e screen ] && mv -f screen screen.$FCUR
+    [ -e movie.dat ] && mv -f movie.dat movie.$FCUR
+    [ -e energy.dat ] && mv -f energy.dat energy.$FCUR
+    [ -e msd.dat ] && mv -f msd.dat msd.$FCUR
+    [ -e rdf.dat ] && mv -f rdf.dat rdf.$FCUR
+}
+
+get_next_backup() {
+    local _prefix="restart.$1"
+    local _imax=0
+    local _i
+    for f in "${_prefix}"*; do
+        if [ -e "$f" ]; then
+            _i="${f/${_prefix}/}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $_imax
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $(pwd)"
+echo "Executable: $PROG"
+echo "MPIRUN: $MPIRUN"
+echo "Hosts: $HOSTS"
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
+echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
+echo
+
+[ -f ./util.sh ] && source util.sh
+
+if [ -e 'jobs' ]; then
+    for stage in $(cat jobs); do
+        run_lammps $stage
+    done
+else
+    for stage in prod equil; do
+        i=$(get_next_backup "$stage")
+        [ "$i" -ne 0 ] && break
+    done
+    run_lammps "${stage}${i}"
+fi

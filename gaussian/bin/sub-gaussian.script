@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#######################################################################
+FILELOG=log
+nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+nprocperjob=$((nnodeperjob*nprocpernode))
+HOSTS=${HOSTS// /,}
+if [ -z "$MEM" ]; then
+    totalprocpernode="$(lscpu|gawk '/^CPU\(s\):/{print $2}')"
+    MEM=$(gawk "/MemTotal/{print int(\$2*0.95*$nprocpernode/$totalprocpernode/1024)}" /proc/meminfo)
+fi
+#######################################################################
+cd "$ROOT"
+echo "Hostname: $(hostname);  ROOT: $ROOT"
+echo "Executable: $PROG"
+echo "MPIRUN: $MPIRUN"
+echo "Hosts: $HOSTS"
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
+echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
+echo
+
+source util.sh
+
+run_gaussian() {
+    local _gin="$1"
+    local _gou="$2"
+
+    sed -i -E -e "s/(%nprocshared *= *).+/\1$nprocpernode/" -e "s/(%mem *= *).+/\1${MEM}MB/" $_gin
+
+    /usr/bin/time -ao $FILELOG $PROG < $_gin >& $_gou || exit -1
+}
+
+if [ -e "jobs" ]; then
+    for fi in $(cat jobs); do
+        job="${fi#gaussian-}"
+        job="${job%.gjf}"
+
+        if [ ! -e "${job}-opt.log" ]; then
+            run_gaussian $fi ${job}-opt.log
+        fi
+
+        # solvation
+        #~/scripts/HPC/g_setup_solv.sh -c $fi
+        #run_gaussian $fi ${dH}-solv.log
+    done
+else
+    fi=gaussian.gjf
+    if [ ! -e 'gaussian.log' ]; then
+        run_gaussian $fi gaussian.log
+    fi
+fi

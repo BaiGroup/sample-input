@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=40
+##SBATCH --mem=0
+#SBATCH --time=48:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=cpu
+
+#######################################################################
+source /etc/profile
+ulimit -s unlimited
+[ -d "$HOME/privatemodules"  ] && module use --append ~/privatemodules
+module rm parallel_studio_xe
+module add parallel_studio_xe/2020.2
+
+MPIRUN='mpirun -np'
+PROG="$HOME/MCCCS/topmon"
+
+if [ "$HOSTS" ]; then
+  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+else
+  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
+  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
+  #echo ${NODE[@]} > tmp-$PBS_JOBID
+  HOSTS=${NODE[@]}
+  ROOT=$SLURM_SUBMIT_DIR
+  hyperthreading=$(scontrol show node ${NODE[0]} | gawk '/ThreadsPerCore=/{split($2,hyperthreading,"="); print hyperthreading[2]}')
+  nprocpernode=$((SLURM_NTASKS_PER_NODE*SLURM_CPUS_PER_TASK/hyperthreading))
+fi
+#######################################################################
+nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+nprocperjob=1 #$((nnodeperjob*nprocpernode))
+HOSTS=${HOSTS// /,}
+#######################################################################
+NAME="$(basename $ROOT)"
+file_start_no=1
+checkjob_frequency=5 #in seconds
+LAUNCHER="$ROOT/qcycle-topmon.script"
+FILELOG="$ROOT/logs/$NAME.log"
+file_prefix="$ROOT/jobs/run"
+file_suffix='.txt'
+FINISHED="$ROOT/logs/$NAME.done"
+#######################################################################
+cd "$ROOT"
+[ -f ./util.sh ] && source util.sh
+mkdir -p "$ROOT/logs"
+#######################################################################
+export MPIRUN PROG HOSTS nprocperjob
+echo "Hostname: $(hostname);  ROOT: $ROOT" >> $FILELOG
+echo "Executable: $PROG" >> $FILELOG
+echo "Launcher: $LAUNCHER" >> $FILELOG
+echo "MPIRUN: $MPIRUN" >> $FILELOG
+echo "Hosts: $HOSTS" >> $FILELOG
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob" >> $FILELOG
+echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE" >> $FILELOG
+echo >> $FILELOG
+#######################################################################
+ifile=$file_start_no
+ijob=0
+
+for (( i = 0; i < ${#NODE[@]} ; ++i )); do
+    for (( j = 0; j < $nprocpernode ; ++j )); do
+        tmparr+=("${NODE[i]}")
+    done
+done
+NODE=("${tmparr[@]}")
+
+while (( 1 )); do
+    for ((inode=0; inode < ${#NODE[@]}; inode+=nprocperjob)); do
+        # skip if jobid[inode] has value and the corresponding job is still running
+        [ -n "${jobid[inode]}" ] && kill -0 "${jobid[inode]}" &> /dev/null && continue
+
+        # if jobid[inode] has value then it must be completed
+        if [ -n "${jobid[inode]}" ] && ! { [ -e $FINISHED ] && grep -q "^${jobname[inode]}$" $FINISHED &> /dev/null; } ; then
+            echo "Job ${jobname[inode]}, pid: ${jobid[inode]} completed." >> $FILELOG
+            echo >> $FILELOG
+            echo "${jobname[inode]}" >> $FINISHED
+            rm -f "${jobname[inode]}/running.lock"
+        fi
+
+        [ -e STOP ] && break
+
+        #find another task to run, skipping finished ones
+        while [ $ijob -ge ${#jobs[@]} ] || [ -e "${jobs[ijob]}/running.lock" ] || grep -q "^${jobs[ijob]}$" $ROOT/logs/*.done &> /dev/null; do
+            if [ $ijob -ge ${#jobs[@]} ]; then
+                #load from the next task file if added tasks have been exhausted
+                fname="${file_prefix}${ifile}${file_suffix}"
+                [ ! -e $fname ] && break
+                (( ifile++ ))
+                echo "Adding jobs from $fname" >> $FILELOG
+                echo >> $FILELOG
+                jobs+=($(cat $fname))
+            fi
+
+            { [ -e "${jobs[ijob]}/running.lock" ] || grep -q "^${jobs[ijob]}$" $ROOT/logs/*.done &> /dev/null; } && (( ijob++ ))
+        done
+
+        if [ $ijob -ge ${#jobs[@]} ]; then
+            if [ $((inode+nprocperjob)) -ge ${#NODE[@]} ]; then
+                break
+            else
+                continue
+            fi
+        fi
+
+        echo "jobs[$ijob]: ${jobs[ijob]}" >> $FILELOG
+        proc1="$((inode % nprocpernode))"
+        proc2="$((proc1 + nprocperjob - 1))"
+        echo "HOSTS=${NODE[inode]} MPIRUN=\"mpiexec -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np\" $LAUNCHER ${jobs[ijob]} 2>stderr 1>stdout &" >> $FILELOG
+        echo >> $FILELOG
+
+        [ -d ${jobs[ijob]} ] || mkdir -p ${jobs[ijob]}
+        cd ${jobs[ijob]}
+        /bin/touch running.lock
+
+        HOSTS=${NODE[inode]} MPIRUN="mpiexec -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np" $LAUNCHER ${jobs[ijob]} 2>stderr 1>stdout &
+        jobid[inode]=$!
+
+        cd $ROOT
+        jobname[inode]=${jobs[((ijob++))]}
+    done
+
+    if [ -e STOP ]; then
+        # if the current directory has a file named "STOP", then wait for all background processes to complete
+        wait
+        exit 0
+    else
+        # otherwise sleep some time and check job status
+        sleep ${checkjob_frequency}
+    fi
+done

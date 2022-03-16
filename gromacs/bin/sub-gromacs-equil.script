@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+#######################################################################
+FILELOG=log
+if [ -z "$nprocperjob" ]; then
+    nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
+    nprocperjob=$((nnodeperjob*nprocpernode))
+    source util.sh
+else
+    module add gromacs/2019.3-double intel/2017.4.196
+
+    MPIRUN='mpirun -np'
+    BASEDIR="/share/apps/gromacs-2019.3/gcc-double-impi-fftw"
+    export PATH="$BASEDIR/bin:$PATH"
+    export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
+    PROG="$BASEDIR/bin/gmx_mpi_d"
+
+    ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+    nprocperjob=1
+fi
+HOSTS=${HOSTS// /,}
+#######################################################################
+run_gromacs() {
+    local FCUR=$1
+    echo "$FCUR: " >> $FILELOG
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG mdrun -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+}
+
+get_next_backup() {
+    local _prefix="$1"
+    local _suffix=".log"
+    local _imax=0
+    local _i
+    for f in "${_prefix}"*"${_suffix}"; do
+        if [ -e "$f" ]; then
+            _i="${f/${_prefix}/}"
+            _i="${_i%${_suffix}}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $((_imax+1))
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $(pwd)"
+echo "MPIRUN: $MPIRUN"
+echo "Executable: $PROG"
+echo "Hosts: $HOSTS"
+echo
+
+k_boxlength=0.9
+target_boxlength=4.1  # ((((3*64+3*32 )*(14*2+16)+1085*18)/(6.022e23)/0.8)*(1e21))^(1/3)
+k_temp=24.55  # (1000-300)/(32.57-4.06)
+target_temperature=300.0
+
+stage="equil"
+i=$(get_next_backup "$stage")
+while :; do
+    $MPIRUN $nprocperjob $PROG grompp -f ../bin/grompp-nvt.mdp -c ${stage}$((i-1)).gro -p topol.top -o ${stage}${i}.tpr -po ${stage}${i}.mdp -maxwarn 1
+    run_gromacs "${stage}${i}"
+
+    boxlength=$(tail -n1 ${stage}${i}.gro | gawk "{print \$1*$k_boxlength^(1/3)}")
+    if (( $(echo "$boxlength < $target_boxlength" | bc -l) )); then echo $boxlength; break; fi
+    rm conf.gro
+    $MPIRUN $nprocperjob gmx_mpi_d editconf -f ${stage}${i}.gro -o conf.gro -box ${boxlength} ${boxlength} ${boxlength}
+    ((i++))
+
+    temp=$(grep 'ref_t' ../bin/grompp-nvt.mdp |gawk "{print ($boxlength-$target_boxlength)*$k_temp+$target_temperature}")
+    sed -i -E -e "s/^ *ref_t *= *.+/ref_t                    = $temp/" -e "s/^ *gen_temp *= *.+/gen_temp                 = $temp/" ../bin/grompp-nvt.mdp
+
+    $MPIRUN $nprocperjob $PROG grompp -f ../bin/grompp-min.mdp -c conf.gro -p topol.top -o ${stage}${i}.tpr -po ${stage}${i}.mdp -maxwarn 1
+    run_gromacs "${stage}${i}"
+    ((i++))
+done

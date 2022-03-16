@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+#BSUB -n 16
+#BSUB -W 720:00
+#BSUB -J name
+#BSUB -e stderr-$LSB_JOBID
+#BSUB -o stdout-$LSB_JOBID
+#BSUB -L bash
+
+#######################################################################
+module rm intel
+module add intel/parallel_studio_xe_2018_u3
+
+MPIRUN='mpirun -np'
+
+CPUINFO=$(lscpu | grep 'Model name:')
+if [[ "${CPUINFO}" =~ "Gold 6140" || "${CPUINFO}" =~ "Gold 6148" ]]; then
+    # Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz
+    PROG=$HOME/MCCCS/exe/topmon
+elif [[ "${CPUINFO}" =~ "E5-2650 v3" ]]; then
+    # Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz
+    PROG=$HOME/MCCCS/exe/topmon
+elif [[ "${CPUINFO}" =~ "E5-2650 0" ]]; then
+    # Intel(R) Xeon(R) CPU E5-2650 0 @ 2.00GHz
+    PROG=$HOME/MCCCS/exe/topmon
+elif [[ "${CPUINFO}" =~ "6380" ]]; then
+    # AMD Opteron(tm) Processor 6380 @ 2.5GHz
+    :
+elif [[ "${CPUINFO}" =~ "6378" ]]; then
+    # AMD Opteron(tm) Processor 6378 @ 2.4GHz
+    :
+elif [[ "${CPUINFO}" =~ "6278" ]]; then
+    # AMD Opteron(tm) Processor 6278 @ 2.4GHz
+    :
+else
+    echo "Unknown CPU architecture: $CPUINFO"
+    PROG=$HOME/MCCCS/exe/topmon
+fi
+
+if [ "$HOSTS" ]; then
+  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+else
+  WALLTIME=$(bjobs -l $LSB_BATCH_JID | grep -A1 RUNLIMIT | tail -n1 | gawk '{printf "%d", $1*60}')
+  NODE=($(uniq $LSB_DJOB_RANKFILE))
+  #echo ${NODE[@]} > tmp-$PBS_JOBID
+  HOSTS=${NODE[@]}
+  ROOT=$LS_SUBCWD
+  nprocpernode=$(echo $LSB_DJOB_NUMPROC ${#NODE[@]} | gawk '{print $1/$2}')
+fi
+#######################################################################
+cd "$ROOT"
+echo "CPUINFO: $CPUINFO"
+source sub-topmon.script
+
+exit 0

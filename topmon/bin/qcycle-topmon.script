@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+#######################################################################
+ROOT="$1"
+FILELOG=log
+#######################################################################
+run_topmon() {
+    local FCUR="$1"
+    echo "$FCUR: " >> $FILELOG
+    [ -e "fort.4.$FCUR" ] && cp -f "fort.4.$FCUR" fort.4
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG || exit -1
+    cp -f config1a.dat fort.77
+    [ -e fort.21 ] && cp -f fort.21 fort.23
+    mv -f run1a.dat "run.$FCUR"
+    mv -f config1a.dat "config.$FCUR"
+    mv -f movie1a.dat "movie.$FCUR"
+    mv -f fort.12 "fort12.$FCUR"
+    [ -e fort.21 ] && mv -f fort.21 "fort21.$FCUR"
+    [ -e cell_param1a.dat ] && mv -f cell_param1a.dat "cellparam.$FCUR"
+    for j in 1 2 3;do
+        [ -e "box${j}config1a.xyz" ] && mv -f "box${j}config1a.xyz" "box${j}config.$FCUR"
+        [ -e "box${j}movie1a.xyz" ] && mv -f "box${j}movie1a.xyz" "box${j}movie.$FCUR"
+    done
+}
+
+get_next_backup() {
+    local _suffix="$1"
+    local _imax=0
+    local _i
+    for f in "run.${_suffix}"*; do
+        if [ -e "$f" ]; then
+            _i="${f/run.${_suffix}/}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $((_imax+1))
+}
+#######################################################################
+echo "Hostname: $(hostname);  ROOT: $ROOT"
+echo "Executable: $PROG"
+echo "MPIRUN: $MPIRUN"
+echo "Hosts: $HOSTS"
+echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
+echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
+echo
+
+if [ -e 'jobs' ]; then
+    for stage in $(cat jobs); do
+        run_topmon $stage
+    done
+else
+    for stage in prod equil; do
+        i=$(get_next_backup "$stage")
+        [ "$i" -ne 1 ] && break
+    done
+    run_topmon "${stage}${i}"
+fi

@@ -1,0 +1,174 @@
+SERVER: http://baigroup.duckdns.org
+TOKEN: USE_GENERATED_TOKEN
+VAULT: /home/CHANGE_THIS/shotgun.sqlite
+targets:
+# XSEDE JHU
+  rockfish:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: defq
+    time: 72
+    mem_per_cpu: 4023
+# XSEDE Purdue
+  anvil:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: shared
+    time: 96
+    mem_per_cpu: 1918
+# XSEDE PSC
+  bridges2:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: RM-shared
+    time: 48
+    mem_per_cpu: 1976
+  bridges:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 28
+    queue: RM-shared
+    time: 48
+# XSEDE SDSC
+  expanse:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: shared
+    time: 48
+    mem_per_cpu: 1947
+    account: umn127
+  comet:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    queue: shared
+    time: 48
+# XSEDE UDel
+  darwin:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: standard
+    time: 168
+    mem_per_cpu: 7808
+    command_decorator: sg xg-cts190069 "${command}"
+# XSEDE UKy
+  kyric:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 40
+    queue: normal
+    time: 72
+    mem_per_cpu: 74989
+# UMass Unity
+  unity-24Cx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: cpu
+    constraint: len_sd530_2018,intel
+    time: 24
+    mem_per_cpu: 8047
+  unity-40Cx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 80
+    queue: cpu
+    constraint: dell_r640_2020,intel
+    time: 24
+    mem_per_cpu: 2400
+  unity-preempt-24Cx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: cpu-preempt
+    constraint: cee_len_sr635_2020,amd
+    time: 24
+    mem_per_cpu: 1360
+  unity-preempt-16Cx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    queue: cpu-preempt
+    constraint: astro_smicro_sbi4429pt2n_2021,amd
+    time: 24
+    mem_per_cpu: 2040
+  unity-preempt-128Cx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 256
+    queue: cpu-preempt
+    constraint: zhoulin_sr645_cpu_2021,amd
+    time: 24
+    mem_per_cpu: 250
+  unity-preempt-32C:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    queue: cpu-preempt
+    constraint: toltec_r640_cpu_2021,intel
+    time: 24
+    mem_per_cpu: 2040
+# XSEDE UTexas
+  stampede2:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: skx-normal
+    time: 48
+  stampede2-knl:
+    host: stampede2
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 68
+    queue: normal
+    time: 48
+# NERSC
+  cori:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    queue: shared
+    constraint: haswell
+    time: 48
+    mem_per_cpu: 4050
+  cori-knl:
+    host: cori
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 68
+    queue: regular
+    constraint: knl,quad,cache
+    time: 48
+  edison:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    queue: shared
+    time: 96
+# PNL
+  cascade:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 16
+    time: 48
+    account: st12345
+# UMassRC
+  ghpcc06:
+    scheduler: lsf
+    skip_pingback: True
+    cpus_per_node: 36
+    queue: long
+    constraint: select[model==Intel_EM64T] same[chassisno]
+    time: 24
+    mem_per_cpu: 4800
