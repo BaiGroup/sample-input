@@ -1,8 +1,8 @@
-default_targets: [bridges]
+default_targets: [ghpcc06]
 download_excludes: ['.nfs*', 'CHG', 'CHGCAR', 'WAVECAR', 'STOPCAR', 'Gau-*', '.*.chk.*', '.*']
 upload_excludes: ['job.yaml', '.nfs*', 'WAVECAR']
 delete_excluded: False
-local_asset_dir: $HOME/projects/ABC/bin
+local_asset_dir: $HOME/tests/benchmarks/bin
 targets:
 # ACCESS UIUC
   delta:

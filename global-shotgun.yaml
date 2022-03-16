@@ -1,6 +1,6 @@
-SERVER: http://baigroup.duckdns.org
-TOKEN: USE_GENERATED_TOKEN
-VAULT: /home/CHANGE_THIS/shotgun.sqlite
+SERVER: http://pengbai.dyndns.org
+TOKEN: bfd925ec043a50a78059866b
+VAULT: /home/pengbai/shotgun.sqlite
 targets:
 # ACCESS UIUC
   delta:
@@ -428,6 +428,7 @@ targets:
     constraint: haswell
     time: 48
     mem_per_cpu: 4050
+    account: m3393
   cori-knl:
     host: cori
     scheduler: slurm
@@ -436,6 +437,7 @@ targets:
     queue: regular
     constraint: knl,quad,cache
     time: 48
+    account: m3393
   perlmutter:
     scheduler: slurm
     skip_pingback: True
@@ -459,7 +461,7 @@ targets:
     skip_pingback: True
     cpus_per_node: 16
     time: 48
-    account: st12345
+    account: st48722
 # UMassRC
   ghpcc06:
     scheduler: lsf
