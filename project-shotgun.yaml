@@ -2,141 +2,52 @@ default_targets: [bridges]
 download_excludes: ['.nfs*', 'CHG', 'CHGCAR', 'WAVECAR', 'STOPCAR', 'Gau-*', '.*.chk.*', '.*']
 upload_excludes: ['job.yaml', '.nfs*', 'WAVECAR']
 delete_excluded: False
+local_asset_dir: /home/USER/projects/ABC/bin
 targets:
 # XSEDE JHU
   rockfish:
     job_root: /home/USER/ABC
-    asset_dir: /home/USER/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-rockfish.script
-    nodes: 1
-    time: 48
 # XSEDE Purdue
   anvil:
     job_root: /anvil/scratch/USER/ABC
-    asset_dir: /anvil/scratch/USER/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-anvil.script
-    nodes: 1
-    time: 48
 # XSEDE PSC
   bridges2:
     job_root: /ocean/projects/GROUP/USER/projects/ABC
-    asset_dir: /ocean/projects/GROUP/USER/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-bridges.script
-    nodes: 1
-    time: 48
 # XSEDE SDSC
   expanse:
     job_root: /expanse/lustre/scratch/USER/temp_project/ABC
-    asset_dir: /expanse/lustre/scratch/USER/temp_project/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-expanse.script
-    nodes: 1
-    time: 48
 # XSEDE UDel
   darwin:
     job_root: /lustre/xg-cts190069/users/UID/ABC
-    asset_dir: /lustre/xg-cts190069/users/UID/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-darwin.script
-    nodes: 1
-    time: 48
 # XSEDE UKy
   kyric:
     job_root: /home/USER/ABC
-    asset_dir: /home/USER/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-pytorch-kyric.script
-    nodes: 1
-    time: 48
 # UMass Unity
   unity-24Cx2:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
   unity-40Cx2:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
   unity-preempt-24Cx2:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
   unity-preempt-16Cx2:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
   unity-preempt-128Cx2:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
   unity-preempt-32C:
     job_root: /scratch/USER_umass_edu/projects/ABC
-    asset_dir: /scratch/USER_umass_edu/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-unity.script
-    nodes: 1
-    time: 36
 # XSEDE UTexas
   stampede2:
     job_root: /scratch/01234/USER/projects/ABC
-    asset_dir: /scratch/01234/USER/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-stampede2.script
-    nodes: 1
-    time: 36
   stampede2-knl:
     job_root: /scratch/01234/USER/projects-knl/ABC
-    asset_dir: /scratch/01234/USER/projects-knl/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-stampede2.script
-    nodes: 1
-    time: 24
 # NERSC
   cori:
     job_root: /global/cscratch1/sd/USER/projects/ABC
-    asset_dir: /global/cscratch1/sd/USER/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-nersc.script
-    nodes: 1
-    time: 36
   cori-knl:
     job_root: /global/cscratch1/sd/USER/projects-knl/ABC
-    asset_dir: /global/cscratch1/sd/USER/projects-knl/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-nersc.script
-    nodes: 1
-    time: 24
 # PNL
   cascade:
     job_root: /dtemp/USER/projects/ABC
-    asset_dir: /dtemp/USER/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-pnnl.script
-    nodes: 1
-    time: 48
 # UMassRC
   ghpcc06:
     job_root: /home/fl12a/projects/ABC
-    asset_dir: /home/fl12a/projects/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-ghpcc.script
-    nodes: 1
-    time: 24
