@@ -27,26 +27,12 @@ targets:
     job_script: sub-vasp-bridges.script
     nodes: 1
     time: 48
-  bridges:
-    job_root: /pylon5/GROUP/USER/ABC
-    asset_dir: /pylon5/GROUP/USER/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-bridges.script
-    nodes: 1
-    time: 48
 # XSEDE SDSC
   expanse:
     job_root: /expanse/lustre/scratch/USER/temp_project/ABC
     asset_dir: /expanse/lustre/scratch/USER/temp_project/ABC/bin
     local_asset_dir: /home/USER/projects/ABC/bin
     job_script: sub-vasp-expanse.script
-    nodes: 1
-    time: 48
-  comet:
-    job_root: /oasis/scratch/comet/USER/temp_project/ABC
-    asset_dir: /oasis/scratch/comet/USER/temp_project/ABC/bin
-    local_asset_dir: /home/USER/projects/ABC/bin
-    job_script: sub-vasp-comet.script
     nodes: 1
     time: 48
 # XSEDE UDel

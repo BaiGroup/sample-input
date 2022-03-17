@@ -26,12 +26,6 @@ targets:
     queue: RM-shared
     time: 48
     mem_per_cpu: 1976
-  bridges:
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 28
-    queue: RM-shared
-    time: 48
 # XSEDE SDSC
   expanse:
     scheduler: slurm
@@ -41,12 +35,6 @@ targets:
     time: 48
     mem_per_cpu: 1947
     account: umn127
-  comet:
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 24
-    queue: shared
-    time: 48
 # XSEDE UDel
   darwin:
     scheduler: slurm
@@ -150,12 +138,6 @@ targets:
     queue: regular
     constraint: knl,quad,cache
     time: 48
-  edison:
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 24
-    queue: shared
-    time: 96
 # PNL
   cascade:
     scheduler: slurm
