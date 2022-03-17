@@ -195,7 +195,7 @@ targets:
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 24 
+    cpus_per_node: 24
     queue: cpu
     constraint: intel6126,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
@@ -224,7 +224,7 @@ targets:
     skip_pingback: True
     cpus_per_node: 24
     queue: cpu-preempt
-    constraint: amd7402,amd,zen2,x86_64_v3,x86_64 
+    constraint: amd7402,amd,zen2,x86_64_v3,x86_64
     time: 168
     mem_per_cpu: 4774
   # unity-preempt-16C: # astroth-cpu[001-008]
@@ -280,7 +280,7 @@ targets:
     cpus_per_node: 16
     gpu: v100:2
     queue: gpu
-    constraint: intel4110,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16 
+    constraint: intel4110,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
     time: 24
     mem_per_cpu: 12051
   unity-36C-2G: # gpu[003-004]
@@ -373,6 +373,66 @@ targets:
     constraint: intel4116,skylake_avx512,x86_64_v4,x86_64,rtx8000,sm_52,sm_61,sm_70,sm_75,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48
     time: 168
     mem_per_cpu: 16060
+# UMN CEMS Neurock
+  enterprise:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    queue: CLUSTER
+    constraint: rack-0
+    time: 96
+    mem_total: 0
+  titan:
+    host: enterprise
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 12
+    queue: 4170HE
+    time: 96
+# UMN MSI
+  mesabi:
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 24
+    time: 96
+    mem_per_cpu: 2580
+    account: neurockm
+  itasca:
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 8
+    time: 96
+    account: neurockm
+  mesabi-s:
+    host: mesabi
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 24
+    time: 96
+    mem_per_cpu: 2580
+    account: siepmann
+  itasca-s:
+    host: itasca
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 8
+    time: 96
+    account: siepmann
+  mesabi-t:
+    host: mesabi
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 24
+    time: 96
+    mem_per_cpu: 2580
+    account: tsapatsi
+  itasca-t:
+    host: itasca
+    scheduler: pbs
+    skip_pingback: True
+    cpus_per_node: 8
+    time: 96
+    account: tsapatsi
 # ACCESS UTexas
   stampede3:
     scheduler: slurm
