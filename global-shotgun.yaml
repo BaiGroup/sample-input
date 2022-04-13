@@ -53,60 +53,96 @@ targets:
     time: 72
     mem_per_cpu: 74989
 # UMass Unity
-  unity-24Cx2:
+  unity-intel-avx512:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    queue: cpu
+    constraint: intel,avx512
+    time: 24
+    mem_per_cpu: 2400
+  unity-intel-avx2:
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    queue: cpu
+    constraint: intel,avx2
+    time: 24
+    mem_per_cpu: 2400
+  unity-amd-avx2:
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 48
     queue: cpu
-    constraint: len_sd530_2018,intel
+    constraint: amd,avx2
+    time: 24
+    mem_per_cpu: 2015
+  unity-24Cx2: # cpu[001-008]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: cpu
+    constraint: len_sd530_2018,avx,avx2,avx512,intel
+    time: 24
+    mem_per_cpu: 4020
+  unity-24Cx2-384G: # cpu[002-004]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: cpu
+    constraint: len_sd530_2018,avx,avx2,avx512,intel
     time: 24
     mem_per_cpu: 8047
-  unity-40Cx2:
+  unity-40Cx2: # cpu[013-025]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 80
     queue: cpu
-    constraint: dell_r640_2020,intel
+    constraint: dell_r640_2020,avx,avx2,avx512,intel
     time: 24
     mem_per_cpu: 2400
-  unity-preempt-24Cx2:
+  unity-preempt-24Cx2: # ceewater-cpu[001-007]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 48
     queue: cpu-preempt
-    constraint: cee_len_sr635_2020,amd
+    constraint: cee_len_sr635_2020,avx,avx2,amd
     time: 24
-    mem_per_cpu: 1360
-  unity-preempt-16Cx2:
+    mem_per_cpu: 2682
+  unity-preempt-16Cx2: # astroth-cpu[001-008]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 32
     queue: cpu-preempt
-    constraint: astro_smicro_sbi4429pt2n_2021,amd
+    constraint: astro_smicro_sbi4429pt2n_2021,avx,avx2,avx512,intel
     time: 24
-    mem_per_cpu: 2040
-  unity-preempt-128Cx2:
+    mem_per_cpu: 5522
+  unity-preempt-128Cx2: # zhoulin-cpu[001-006]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 256
     queue: cpu-preempt
-    constraint: zhoulin_sr645_cpu_2021,amd
+    constraint: zhoulin_sr645_cpu_2021,avx,avx2,amd
     time: 24
-    mem_per_cpu: 250
-  unity-preempt-32C:
+    mem_per_cpu: 2015
+  unity-preempt-32C: # toltec-cpu[001-006]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 32
     queue: cpu-preempt
-    constraint: toltec_r640_cpu_2021,intel
+    constraint: toltec_r640_cpu_2021,avx,avx2,avx512,intel
     time: 24
-    mem_per_cpu: 2040
+    mem_per_cpu: 12049
 # XSEDE UTexas
   stampede2:
     scheduler: slurm
