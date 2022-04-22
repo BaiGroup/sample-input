@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=40
+##SBATCH --mem=0
+#SBATCH --time=48:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=cpu
+
+#######################################################################
+source /etc/profile
+ulimit -s unlimited
+[ -d "$HOME/privatemodules"  ] && module use --append ~/privatemodules
+module rm icc gcc
+module add icc/2022.2.3
+module add mkl/2022.0.2 mpi/2021.5.1
+
+if lscpu | grep 'Model name:' | grep -q 'EPYC'; then
+  export MKL_DEBUG_CPU_TYPE=5
+  export MKL_ENABLE_INSTRUCTIONS=AVX2
+fi
+
+export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
+
+BASEDIR="$HOME/tools/lammps/intel-impi-mkl"
+
+MPIRUN='mpirun -np'
+export PATH="$BASEDIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
+PROG="$BASEDIR/bin/lmp"
+
+if [ "$HOSTS" ]; then
+  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+else
+  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
+  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
+  #echo ${NODE[@]} > tmp-$PBS_JOBID
+  HOSTS=${NODE[@]}
+  ROOT=$SLURM_SUBMIT_DIR
+  hyperthreading=$(scontrol show node ${NODE[0]} | gawk '/ThreadsPerCore=/{split($2,hyperthreading,"="); print hyperthreading[2]}')
+  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
+  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK/hyperthreading))
+fi
+#######################################################################
+cd "$ROOT"
+source sub-lammps.script
+
+exit 0

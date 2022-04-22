@@ -30,7 +30,8 @@ else
   #echo ${NODE[@]} > tmp-$PBS_JOBID
   HOSTS=${NODE[@]}
   ROOT=$SLURM_SUBMIT_DIR
-  nprocpernode=$((SLURM_NTASKS_PER_NODE*SLURM_CPUS_PER_TASK))
+  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
+  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK))
 fi
 #######################################################################
 cd "$ROOT"

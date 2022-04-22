@@ -29,7 +29,8 @@ else
   HOSTS=${NODE[@]}
   ROOT=$SLURM_SUBMIT_DIR
   hyperthreading=$(scontrol show node ${NODE[0]} | gawk '/ThreadsPerCore=/{split($2,hyperthreading,"="); print hyperthreading[2]}')
-  nprocpernode=$((SLURM_NTASKS_PER_NODE*SLURM_CPUS_PER_TASK/hyperthreading))
+  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
+  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK/hyperthreading))
 fi
 #######################################################################
 cd "$ROOT"

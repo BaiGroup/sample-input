@@ -24,25 +24,25 @@ targets:
     job_root: /home/USER/ABC
 # UMass Unity
   unity-intel-avx512:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-intel-avx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-amd-avx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-24Cx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-24Cx2-384G:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-40Cx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-preempt-24Cx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-preempt-16Cx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-preempt-128Cx2:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
   unity-preempt-32C:
-    job_root: /scratch/USER_umass_edu/projects/ABC
+    job_root: /work/USER_umass_edu/projects/ABC
 # XSEDE UTexas
   stampede2:
     job_root: /scratch/01234/USER/projects/ABC
