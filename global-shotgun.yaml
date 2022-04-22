@@ -52,7 +52,7 @@ targets:
     queue: normal
     time: 72
     mem_per_cpu: 74989
-# UMass Unity
+# UMass Unity CPU
   unity-intel-avx512:
     host: unity
     scheduler: slurm
@@ -143,6 +143,55 @@ targets:
     constraint: toltec_r640_cpu_2021,avx,avx2,avx512,intel
     time: 24
     mem_per_cpu: 12049
+  # UMass Unity GPU
+  unity-16Cx2-2G: # gpu[001-002]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    gpu: v100:2
+    queue: gpu-long
+    constraint: len_sr650_2018,avx,avx2,avx512,v100,intel
+    time: 24
+    mem: 192828
+  unity-36Cx2-2G: # gpu[003-004]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 72
+    gpu: v100:2
+    queue: gpu-long
+    constraint: len_sr650_2018,avx,avx2,avx512,v100,intel
+    time: 24
+    mem: 191908
+  unity-24Cx2-8G: # ials-gpu[001-033]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    gpu: 2080ti:8
+    queue: ials-gpu
+    constraint: ials_gigabyte_gpu_2020,avx,avx2,avx512,2080ti,intel
+    time: 24
+    mem: 191914
+  unity-12Cx2-4G-1: # gypsum-gpu[001-025]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    gres: gpu:m40:4
+    queue: gpu-preempt
+    time: 24
+    mem: 257849
+  unity-12Cx2-4G-2: # gypsum-gpu[026-099]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    gres: gpu:titanx:4
+    queue: gpu-preempt
+    time: 24
+    mem: 257849
 # XSEDE UTexas
   stampede2:
     scheduler: slurm
