@@ -53,6 +53,10 @@ targets:
     job_root: /global/cscratch1/sd/USER/projects/ABC
   cori-knl:
     job_root: /global/cscratch1/sd/USER/projects-knl/ABC
+  perlmutter:
+    job_root: $PSCRATCH/ABC
+  perlmutter-gpu:
+    job_root: $PSCRATCH/ABC
 # PNL
   cascade:
     job_root: /dtemp/USER/projects/ABC

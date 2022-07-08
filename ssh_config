@@ -48,8 +48,13 @@ Host cetus mira vesta
   User CHANGE_THIS
 Host *.alcf.anl.gov
   User CHANGE_THIS
-Host cori edison nxcloud??
+Host cori nxcloud?? perlmutter-p1
   HostName %h.nersc.gov
+  User CHANGE_THIS
+  ControlPersist 168h
+  IdentityFile ~/.ssh/nersc
+Host perlmutter*
+  HostName perlmutter-p1.nersc.gov
   User CHANGE_THIS
   ControlPersist 168h
   IdentityFile ~/.ssh/nersc

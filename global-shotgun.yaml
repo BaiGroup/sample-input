@@ -223,6 +223,22 @@ targets:
     queue: regular
     constraint: knl,quad,cache
     time: 48
+  perlmutter:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    extra_options: --qos regular
+    constraint: cpu
+    time: 12
+    account: m3393
+  perlmutter-gpu:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    extra_options: --qos regular
+    constraint: gpu
+    time: 12
+    account: m3393_g
 # PNL
   cascade:
     scheduler: slurm
