@@ -2,64 +2,67 @@ default_targets: [bridges]
 download_excludes: ['.nfs*', 'CHG', 'CHGCAR', 'WAVECAR', 'STOPCAR', 'Gau-*', '.*.chk.*', '.*']
 upload_excludes: ['job.yaml', '.nfs*', 'WAVECAR']
 delete_excluded: False
-local_asset_dir: /home/USER/projects/ABC/bin
+local_asset_dir: $HOME/projects/ABC/bin
 targets:
 # XSEDE JHU
   rockfish:
-    job_root: /home/USER/ABC
+  # $SCRATCH4 sometimes not set
+    job_root: /scratch4/$USER/ABC
 # XSEDE Purdue
   anvil:
-    job_root: /anvil/scratch/USER/ABC
+    job_root: $SCRATCH/ABC
 # XSEDE PSC
   bridges2:
-    job_root: /ocean/projects/GROUP/USER/projects/ABC
+    job_root: $PROJECT/ABC
 # XSEDE SDSC
   expanse:
-    job_root: /expanse/lustre/scratch/USER/temp_project/ABC
+    job_root: /expanse/lustre/scratch/$USER/temp_project/ABC
 # XSEDE UDel
   darwin:
-    job_root: /lustre/xg-cts190069/users/UID/ABC
+  # $WORKDIR_SW sometimes not set
+    job_root: /lustre/xg-cts190069/users/$UID/ABC
 # XSEDE UKy
   kyric:
-    job_root: /home/USER/ABC
+  # $SCRATCH sometimes not set
+    job_root: $HOME/projects/ABC
 # UMass Unity
   unity-intel-avx512:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-intel-avx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-amd-avx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-24Cx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-24Cx2-384G:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-40Cx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-preempt-24Cx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-preempt-16Cx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-preempt-128Cx2:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
   unity-preempt-32C:
-    job_root: /work/USER_umass_edu/projects/ABC
+    job_root: /work/$USER/projects/ABC
 # XSEDE UTexas
   stampede2:
-    job_root: /scratch/01234/USER/projects/ABC
+    job_root: $SCRATCH/ABC
   stampede2-knl:
-    job_root: /scratch/01234/USER/projects-knl/ABC
+    job_root: $SCRATCH/ABC
 # NERSC
   cori:
-    job_root: /global/cscratch1/sd/USER/projects/ABC
+    job_root: $SCRATCH/ABC
   cori-knl:
-    job_root: /global/cscratch1/sd/USER/projects-knl/ABC
+    job_root: $SCRATCH/ABC
   perlmutter:
     job_root: $PSCRATCH/ABC
   perlmutter-gpu:
     job_root: $PSCRATCH/ABC
 # PNL
   cascade:
-    job_root: /dtemp/USER/projects/ABC
+    job_root: /dtemp/$USER/projects/ABC
 # UMassRC
   ghpcc06:
-    job_root: /home/fl12a/projects/ABC
+    job_root: $HOME/projects/ABC
