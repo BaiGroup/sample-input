@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
-#######################################################################
 run_topmon() {
     local FCUR="$1"
     echo "$FCUR: " >> $FILELOG
@@ -38,16 +33,6 @@ get_next_backup() {
     echo $((_imax+1))
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "Hosts: $HOSTS"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
-echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
-echo
-
-[ -f ./util.sh ] && source util.sh
-
 if [ -e 'jobs' ]; then
     for stage in $(cat jobs); do
         run_topmon $stage

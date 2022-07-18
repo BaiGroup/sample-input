@@ -32,6 +32,7 @@ targets:
     skip_pingback: True
     cpus_per_node: 128
     queue: shared
+    constraint: lustre
     time: 48
     mem_per_cpu: 1947
     account: umn127
@@ -179,7 +180,7 @@ targets:
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 24
-    gres: gpu:m40:4
+    gpu: m40:4
     queue: gpu-preempt
     time: 24
     mem: 257849
@@ -188,7 +189,7 @@ targets:
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 24
-    gres: gpu:titanx:4
+    gpu: titanx:4
     queue: gpu-preempt
     time: 24
     mem: 257849
@@ -210,7 +211,7 @@ targets:
   cori:
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 32
+    cpus_per_node: 64
     queue: shared
     constraint: haswell
     time: 48
@@ -226,15 +227,16 @@ targets:
   perlmutter:
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 128
-    extra_options: --qos regular
+    cpus_per_node: 256
+    extra_options: --qos shared
     constraint: cpu
     time: 12
     account: m3393
   perlmutter-gpu:
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 64
+    cpus_per_node: 128
+    gpu: 4
     extra_options: --qos regular
     constraint: gpu
     time: 12

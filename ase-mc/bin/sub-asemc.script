@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
-#######################################################################
 RESTART_DB='restart.db'
 # continue simulation
 cont() {
@@ -34,7 +29,7 @@ run_asemc() {
     temp=$(echo $PWD|/bin/grep -o -E "[0-9]+K"|sed "s/K//")
     options="--temp $temp"
 
-    /usr/bin/time -ao $FILELOG python fpms.py $(cont) $options >>mc.out 2>>mc.err
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG $(cont) $options >>mc.out 2>>mc.err
 
     mv -f mc.out $FCUR.out
     mv -f mc.err $FCUR.err
@@ -43,16 +38,6 @@ run_asemc() {
     ln -sf $FCUR.db $RESTART_DB
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "Hosts: $HOSTS"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
-echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
-echo
-
-[ -f ./util.sh ] && source util.sh
-
 if [ -e 'jobs' ]; then
     for stage in $(cat jobs); do
         run_asemc $stage

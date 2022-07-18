@@ -20,37 +20,21 @@ module add parallel_studio_xe/2020.2
 MPIRUN='mpirun -np'
 PROG="$HOME/MCCCS/topmon"
 
-if [ "$HOSTS" ]; then
-  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-else
-  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
-  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
-  #echo ${NODE[@]} > tmp-$PBS_JOBID
-  HOSTS=${NODE[@]}
-  ROOT=$SLURM_SUBMIT_DIR
-  hyperthreading=$(scontrol show node ${NODE[0]} | gawk '/ThreadsPerCore=/{split($2,hyperthreading,"="); print hyperthreading[2]}')
-  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
-  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK/hyperthreading))
-fi
-#######################################################################
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=1 #$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
 #######################################################################
 NAME="$(basename $ROOT)"
 file_start_no=1
 checkjob_frequency=5 #in seconds
-LAUNCHER="$ROOT/qcycle-topmon.script"
+LAUNCHER="$ROOT/sub-topmon.script"
 FILELOG="$ROOT/logs/$NAME.log"
 file_prefix="$ROOT/jobs/run"
 file_suffix='.txt'
 FINISHED="$ROOT/logs/$NAME.done"
-#######################################################################
-cd "$ROOT"
-[ -f ./util.sh ] && source util.sh
 mkdir -p "$ROOT/logs"
 #######################################################################
-export MPIRUN PROG HOSTS nprocperjob
+export FILELOG HOSTS MPIRUN PROG ROOT nprocperjob
 echo "Hostname: $(hostname);  ROOT: $ROOT" >> $FILELOG
 echo "Executable: $PROG" >> $FILELOG
 echo "Launcher: $LAUNCHER" >> $FILELOG
@@ -111,14 +95,14 @@ while (( 1 )); do
         echo "jobs[$ijob]: ${jobs[ijob]}" >> $FILELOG
         proc1="$((inode % nprocpernode))"
         proc2="$((proc1 + nprocperjob - 1))"
-        echo "HOSTS=${NODE[inode]} MPIRUN=\"mpiexec -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np\" $LAUNCHER ${jobs[ijob]} 2>stderr 1>stdout &" >> $FILELOG
+        echo "HOSTS=${NODE[inode]} MPIRUN=\"mpiexec -hosts ${NODE[inode]} -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np\" $LAUNCHER ${jobs[ijob]} 2>stderr 1>stdout &" >> $FILELOG
         echo >> $FILELOG
 
         [ -d ${jobs[ijob]} ] || mkdir -p ${jobs[ijob]}
         cd ${jobs[ijob]}
         /bin/touch running.lock
 
-        HOSTS=${NODE[inode]} MPIRUN="mpiexec -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np" $LAUNCHER ${jobs[ijob]} 2>stderr 1>stdout &
+        ROOT=${jobs[ijob]} HOSTS=${NODE[inode]} MPIRUN="mpiexec -hosts ${NODE[inode]} -genv I_MPI_PIN_PROCESSOR_LIST=${proc1}-${proc2} -np" $LAUNCHER 2>stderr 1>stdout &
         jobid[inode]=$!
 
         cd $ROOT

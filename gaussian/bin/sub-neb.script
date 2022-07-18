@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
-#######################################################################
 clean_up_last_run() {
     local _i
     if [ -e 'neb1.traj' ]; then
@@ -57,16 +52,6 @@ run_neb() {
     $MPIRUN $mpi -ppn $mpipernode ./find_ts.py -s react.pdb -p prod.pdb --neb $nimages --neb-guide-count $nguide --neb-guide-prefix neb --neb-guide-suffix "$suffix" -c $charge -m $multiplicity --proc-per-image $nprocperimage ${tmp_options}
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "Hosts: $HOSTS"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
-echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
-echo
-
-[ -f ./util.sh ] && source util.sh
-
 clean_up_last_run
 
 run_neb

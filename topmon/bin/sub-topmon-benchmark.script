@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
 #######################################################################
-ROOT="$1"
-FILELOG=log
-#######################################################################
 run_topmon() {
     local FCUR="$1"
+    nprocperjob=$2
     echo "$FCUR: " >> $FILELOG
     [ -e "fort.4.$FCUR" ] && cp -f "fort.4.$FCUR" fort.4
     /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG || exit -1
@@ -35,23 +33,22 @@ get_next_backup() {
     done
     echo $((_imax+1))
 }
-#######################################################################
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "Hosts: $HOSTS"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
-echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
-echo
 
-if [ -e 'jobs' ]; then
-    for stage in $(cat jobs); do
-        run_topmon $stage
-    done
-else
-    for stage in prod equil; do
-        i=$(get_next_backup "$stage")
-        [ "$i" -ne 1 ] && break
-    done
-    run_topmon "${stage}${i}"
+run_benchmark() {
+    local _nproc=$1
+    local _nproc0
+    printf -v _nproc0 "%02d" $_nproc
+    local FCUR="np$_nproc0"
+    cp -a config.benchmark fort.77
+    [ -e "run.$FCUR" ] || run_topmon $FCUR $_nproc
+}
+#######################################################################
+for ((nproc=1; nproc<=nprocpernode; nproc*=2)); do
+    run_benchmark $nproc
+done
+
+((nproc/=2))
+
+if ((nproc<nprocpernode)); then
+    run_benchmark $nprocpernode
 fi

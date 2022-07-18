@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-if [ -z "$nprocperjob" ]; then
-    nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-    nprocperjob=$((nnodeperjob*nprocpernode))
-    source util.sh
-fi
-HOSTS=${HOSTS// /,}
-#######################################################################
 run_analysis() {
     local FCUR=$1
     echo "$FCUR: " >> $FILELOG
@@ -34,13 +26,6 @@ get_latest_edr() {
     echo $_imax
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $(pwd)"
-echo "MPIRUN: $MPIRUN"
-echo "Executable: $PROG"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob; SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE"
-echo "Hosts: $HOSTS"
-echo
-
 if [ -e 'jobs' ]; then
     for stage in $(cat jobs); do
         run_analysis $stage

@@ -35,19 +35,9 @@ export PATH="$BASEDIR/bin:$PATH"
 export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
 PROG="$BASEDIR/bin/gmx_mpi_d"
 
-if [ "$HOSTS" ]; then
-  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-else
-  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
-  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
-  #echo ${NODE[@]} > tmp-$PBS_JOBID
-  HOSTS=${NODE[@]}
-  ROOT=$SLURM_SUBMIT_DIR
-  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
-  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK))
-fi
-#######################################################################
-cd "$ROOT"
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
 source sub-gromacs.script
 
 exit 0

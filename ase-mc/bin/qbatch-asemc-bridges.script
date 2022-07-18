@@ -21,18 +21,11 @@ export PYTHONPATH="$HOME/MCCCS/exe:$HOME/tools/lammps/intel-impi-mkl/lib/python3
 export LD_LIBRARY_PATH="$HOME/MCCCS/exe:$HOME/tools/lammps/intel-impi-mkl/lib64:$HOME/.conda/envs/conda3.9/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 MPIRUN='mpirun -np'
+PROG='./fpms.py'
 
-if [ "$HOSTS" ]; then
-  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-else
-  WALLTIME=$(scontrol show job $SLURM_JOB_ID | gawk '/TimeLimit/{seconds=0; split($2,t1,"="); if (split(t1[2],t2,"-")==2) {seconds=t2[1]*24; t2[1]=t2[2];} split(t2[1],t3,":"); print ((seconds+t3[1])*60+t3[2])*60+t3[3]}')
-  NODE=($(scontrol show hostname "$SLURM_NODELIST"))
-  #echo ${NODE[@]} > tmp-$PBS_JOBID
-  HOSTS=${NODE[@]}
-  ROOT=$SLURM_SUBMIT_DIR
-  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
-  nprocpernode=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK))
-fi
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
 #######################################################################
 cat << 'EOF' > $ROOT/run_serial_job.sh
 #!/usr/bin/env bash
@@ -46,13 +39,9 @@ EOF
 
 chmod +x $ROOT/run_serial_job.sh
 #######################################################################
-cd "$ROOT"
-source util.sh
-
 nprocperjob=1
 ((njobspernode=nprocpernode/nprocperjob))
-nprocpernode=$nprocperjob
-export MPIRUN PROG HOSTS nprocpernode
+export FILELOG HOSTS MPIRUN PROG nprocperjob
 
 inode=-1
 ijob=0
@@ -60,7 +49,7 @@ ijob=0
 #>>>BEGIN<<<
 cd "$ROOT/$job_dir"
 [ $((ijob++ % njobspernode)) -eq 0 ] && ((inode++))
-HOSTS=${NODE[inode]} MPIRUN="$ROOT/run_serial_job.sh $ijob" ./sub-topmon.script 2>stderr 1>stdout &
+HOSTS=${NODE[inode]} MPIRUN="$ROOT/run_serial_job.sh $ijob" ./sub-asemc.script 2>stderr 1>stdout &
 
 #>>>END<<<
 

@@ -1,26 +1,11 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
 if [ -z "$MEM" ]; then
     totalprocpernode="$(lscpu|gawk '/^CPU\(s\):/{print $2}')"
     MEM=$(gawk "/MemTotal/{print int(\$2*0.95*$nprocpernode/$totalprocpernode/1024)}" /proc/meminfo)
 fi
 #######################################################################
-cd "$ROOT"
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "Hosts: $HOSTS"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob"
-echo "SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE; SLURM_NTASKS_PER_NODE: $SLURM_NTASKS_PER_NODE"
-echo
-
-source util.sh
-
 run_gaussian() {
     local _gin="$1"
     local _gou="$2"

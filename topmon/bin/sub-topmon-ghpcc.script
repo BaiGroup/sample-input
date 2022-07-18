@@ -37,18 +37,7 @@ else
     PROG=$HOME/MCCCS/exe/topmon
 fi
 
-if [ "$HOSTS" ]; then
-  ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-else
-  WALLTIME=$(bjobs -l $LSB_BATCH_JID | grep -A1 RUNLIMIT | tail -n1 | gawk '{printf "%d", $1*60}')
-  NODE=($(uniq $LSB_DJOB_RANKFILE))
-  #echo ${NODE[@]} > tmp-$PBS_JOBID
-  HOSTS=${NODE[@]}
-  ROOT=$LS_SUBCWD
-  nprocpernode=$(echo $LSB_DJOB_NUMPROC ${#NODE[@]} | gawk '{print $1/$2}')
-fi
-#######################################################################
-cd "$ROOT"
+source util-lsf.sh
 echo "CPUINFO: $CPUINFO"
 source sub-topmon.script
 

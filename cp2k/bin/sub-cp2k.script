@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
 BUFFER_TIME=900 # in seconds
-if [ -z "$nprocperjob" ]; then
-    nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-    nprocperjob=$((nnodeperjob*nprocpernode))
-    source util.sh
-fi
-HOSTS=${HOSTS// /,}
 #######################################################################
 run_cp2k() {
     local FCUR="$1"
@@ -49,12 +42,6 @@ get_next_backup() {
     echo $((_imax+1))
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $(pwd)"
-echo "MPIRUN: $MPIRUN $nprocperjob"
-echo "Executable: $PROG"
-echo "Hosts: $HOSTS"
-echo
-
 if [ -e 'jobs' ]; then
     for stage in $(cat jobs); do
         run_cp2k $stage

@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 
 #######################################################################
-FILELOG=log
-nnodeperjob=$(echo $HOSTS|wc -w) #$PBS_NUM_NODES or $SLURM_NNODES
-nprocperjob=$((nnodeperjob*nprocpernode))
-HOSTS=${HOSTS// /,}
-#######################################################################
 nprocperjob=$nnodeperjob
 export OMP_NUM_THREADS=$nprocpernode
 export OMP_SCHEDULE="guided"
@@ -43,15 +38,6 @@ get_next_backup() {
     echo $((_imax+1))
 }
 #######################################################################
-echo "Hostname: $(hostname);  ROOT: $ROOT"
-echo "Executable: $PROG"
-echo "MPIRUN: $MPIRUN"
-echo "nprocpernode: $nprocpernode; nnodeperjob: $nnodeperjob; SLURM_CPUS_PER_TASK: $SLURM_CPUS_PER_TASK; SLURM_TASKS_PER_NODE: $SLURM_TASKS_PER_NODE"
-echo "Hosts: $HOSTS"
-echo
-
-[ -f ./util.sh ] && source util.sh
-
 if [ -e 'jobs' ]; then
     for stage in $(cat jobs); do
         run_topmon $stage
