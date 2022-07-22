@@ -80,6 +80,9 @@ run_vasp() {
 set_incar_parallelization() {
   IMAGES="$(grep IMAGES INCAR | tail -n 1 | cut -d '=' -f 2)"
   [ -z "$IMAGES" ] && IMAGES=1
+
+  local _NSIM=${NSIM:-$nprocpernode}
+
   local _NPAR=${NPAR:-$(echo "sqrt($nprocperjob/$IMAGES)" | bc | cut -d'.' -f 1)}
   if [ $(echo "$_NPAR < 1" | bc) -eq 1 ]; then
     _NPAR=1
@@ -89,9 +92,13 @@ set_incar_parallelization() {
     done
   fi
 
+  local _KPAR=${KPAR:-$((ngpuperjob/IMAGES))}
+  [ "$_KPAR" -eq 0 ] && _KPAR=1;
+
   sed -i -E INCAR \
-      -e "s/(NSIM *= *).*/\1$nprocpernode/" \
+      -e "s/(NSIM *= *).*/\1$_NSIM/" \
       -e "s/(NPAR *= *).*/\1$_NPAR/" \
+      -e "s/(KPAR *= *).*/\1$_KPAR/" \
       -e "s/(LPLANE *= *).*/\1.TRUE./" \
       -e "s/(LSCALU *= *).*/\1.FALSE./"
 
