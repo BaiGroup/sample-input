@@ -8,7 +8,23 @@
 #BSUB -L bash
 
 #######################################################################
-module add gaussian/g16.a03
+# The code files are group accessible
+export g16root='/home/pb22a/tools/gaussian/g16.a03'
+export GV_DIR='/home/pb22a/tools/gaussian/gaussview-6.0.16'
+export GAUSS_MEMDEF=100000000
+export GAUSS_EXEDIR="$g16root/bsd:$g16root/local:$g16root/extras:$g16root"
+export PERLLIB="$g16root/bsd"
+export _DSM_BARRIER=SHM
+export _RLD_ARGS='-log /dev/null'
+export GDVBASIS="$g16root/basis"
+export GAUSS_LEXEDIR="$g16root/linda-exe"
+export GAUSS_LFLAGS='-workerwait 900 -opt "Tsnet.Node.lindarsharg: ssh "'
+export PATH="${PATH:+$PATH:}$g16root/bsd:$g16root:$g16root/bin:$GV_DIR/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$g16root/bsd:$g16root/local:$g16root/extras:$g16root:$GV_DIR/lib:$GV_DIR/lib/MesaGL"
+export MANPATH="${MANPATH:+$MANPATH:}$g16root/bsd"
+export LIBPATH="${LIBPATH:+$LIBPATH:}$GV_DIR/lib"
+export PATH="${PATH:+$PATH:}$GV_DIR"
+
 PROG="$(which g16)"
 
 CPUINFO=$(lscpu | grep 'Model name:')

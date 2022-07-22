@@ -19,7 +19,8 @@ export MKL_DEBUG_CPU_TYPE=5
 export MKL_ENABLE_INSTRUCTIONS=AVX2
 
 MPIRUN='mpirun -np'
-BASEDIR="$HOME/tools/gromacs-2019.6/gcc-double-impi-fftw"
+# The code files are group accessible
+BASEDIR="/home/baip/tools/gromacs-2019.6/gcc-double-impi-fftw"
 export PATH="$BASEDIR/bin:$PATH"
 export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
 PROG="$BASEDIR/bin/gmx_mpi_d"

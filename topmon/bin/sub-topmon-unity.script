@@ -13,12 +13,13 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d "$HOME/privatemodules"  ] && module use --append ~/privatemodules
+[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
 module rm parallel_studio_xe
 module add parallel_studio_xe/2020.2
 
 MPIRUN='mpirun -np'
-PROG="$HOME/MCCCS/exe/topmon"
+# The code files are group accessible
+PROG="/work/pengbai_umass_edu/MCCCS/exe/topmon"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

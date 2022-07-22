@@ -13,7 +13,7 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d "$HOME/privatemodules"  ] && module use --append ~/privatemodules
+[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
 module add intel-oneapi-compilers/2021.4.0 intel-oneapi-mpi/2021.6.0 mkl/2022.3.1
 
 if lscpu | grep 'Model name:' | grep -q 'EPYC'; then
@@ -22,7 +22,8 @@ if lscpu | grep 'Model name:' | grep -q 'EPYC'; then
 fi
 
 MPIRUN='mpirun -np'
-PROG="$HOME/vasp-tools/hosts/unity/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
+# The code files are group accessible
+PROG="/work/pengbai_umass_edu/vasp-tools/hosts/unity/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

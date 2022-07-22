@@ -21,11 +21,11 @@ MPIRUN='srun -c 1 --cpu_bind=cores -n'
 if lscpu | grep -q 'Xeon Phi' &> /dev/null; then
     # knl
     module add craype-mic-knl
-    PROG="$HOME/MCCCS/exe/topmon-knl"
+    PROG="/global/common/software/m3393/MCCCS/exe/topmon-knl"
 elif lscpu | grep -q ' v3 @ ' &> /dev/null; then
     # cori
     module add craype-haswell
-    PROG="$HOME/MCCCS/exe/topmon"
+    PROG="/global/common/software/m3393/MCCCS/exe/topmon"
 else
     # edison
     PROG="/NOT_IMPLEMENTED"

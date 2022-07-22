@@ -21,13 +21,13 @@ MPIRUN='srun -c 1 --cpu_bind=cores -n'
 if lscpu | grep -q 'Xeon Phi' &> /dev/null; then
     # knl
     module swap craype-haswell craype-mic-knl
-    PROG="$HOME/vasp-tools/hosts/cori-knl/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
+    PROG="/global/common/software/m3393/vasp-tools/hosts/cori-knl/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
 elif lscpu | grep -q ' v3 @ ' &> /dev/null; then
     # cori
-    PROG="$HOME/vasp-tools/hosts/cori/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
+    PROG="/global/common/software/m3393/vasp-tools/hosts/cori/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
 else
     # edison
-    PROG="$HOME/vasp-tools/hosts/edison/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
+    PROG="/global/common/software/m3393/vasp-tools/hosts/edison/vaspexec/vasp5.4.1_ifort_mpich_mkl_vtst_vaspsol"
 fi
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')

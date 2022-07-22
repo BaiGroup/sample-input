@@ -13,7 +13,7 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d "$HOME/privatemodules"  ] && module use --append ~/privatemodules
+[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
 module rm icc gcc
 module add icc/2022.2.3
 module add mkl/2022.0.2 mpi/2021.5.1
@@ -25,7 +25,8 @@ fi
 
 export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
-BASEDIR="$HOME/tools/lammps/intel-impi-mkl"
+# The code files are group accessible
+BASEDIR="/work/pengbai_umass_edu/tools/lammps/intel-impi-mkl"
 
 MPIRUN='mpirun -np'
 export PATH="$BASEDIR/bin:$PATH"

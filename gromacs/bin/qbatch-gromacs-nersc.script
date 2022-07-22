@@ -21,11 +21,11 @@ MPIRUN='srun -c 1 --cpu_bind=cores -n'
 if lscpu | grep -q 'Xeon Phi' &> /dev/null; then
     # knl
     module add craype-mic-knl
-    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl-knl"
+    BASEDIR="/global/common/software/m3393/tools/gromacs-2019.3/intel-double-impi-mkl-knl"
 elif lscpu | grep -q ' v3 @ ' &> /dev/null; then
     # cori
     module add craype-haswell
-    BASEDIR="$HOME/tools/gromacs-2019.3/intel-double-impi-mkl"
+    BASEDIR="/global/common/software/m3393/tools/gromacs-2019.3/intel-double-impi-mkl"
 else
     # edison
     :

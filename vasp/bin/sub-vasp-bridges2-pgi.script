@@ -20,7 +20,7 @@ export SLURM_WHOLE=1
 export NO_STOP_MESSAGE=yes
 
 MPIRUN='mpirun -np'
-PROG="$HOME/vasp-tools/hosts/bridges2/vaspexec/vasp6.1.2_pgi_ompi_vtst"
+PROG="/ocean/projects/cts190028p/shared/vasp-tools/hosts/bridges2/vaspexec/vasp6.1.2_pgi_ompi_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

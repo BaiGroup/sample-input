@@ -15,7 +15,8 @@ module rm intel gcc openmpi
 module add intel/2020.2
 
 MPIRUN='mpirun -np'
-PROG="$HOME/vasp-tools/hosts/rockfish/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
+# The code files are group accessible
+PROG="/data/baip/vasp-tools/hosts/rockfish/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

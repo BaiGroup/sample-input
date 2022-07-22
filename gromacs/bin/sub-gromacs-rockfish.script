@@ -15,7 +15,8 @@ module rm intel gcc openmpi
 module add gcc/9.3.0 openmpi/3.1.6
 
 MPIRUN='mpirun -np'
-BASEDIR="$HOME/tools/gromacs-2019.6/gcc-double-ompi-fftw"
+# The code files are group accessible
+BASEDIR="/data/baip/tools/gromacs-2019.6/gcc-double-ompi-fftw"
 export PATH="$BASEDIR/bin:$PATH"
 export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
 PROG="$BASEDIR/bin/gmx_mpi_d"

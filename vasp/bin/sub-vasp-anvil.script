@@ -18,7 +18,8 @@ export MKL_DEBUG_CPU_TYPE=5
 export MKL_ENABLE_INSTRUCTIONS=AVX2
 
 MPIRUN='mpirun -np'
-PROG="$HOME/vasp-tools/hosts/anvil/vaspexec/vasp6.1.2_ifort_mvapich_mkl_vtst"
+# The code files are group accessible
+PROG="/home/x-baip/vasp-tools/hosts/anvil/vaspexec/vasp6.1.2_ifort_mvapich_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

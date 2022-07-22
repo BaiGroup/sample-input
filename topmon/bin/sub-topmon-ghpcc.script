@@ -14,15 +14,16 @@ module add intel/parallel_studio_xe_2018_u3
 MPIRUN='mpirun -np'
 
 CPUINFO=$(lscpu | grep 'Model name:')
+# The code files are group accessible
 if [[ "${CPUINFO}" =~ "Gold 6140" || "${CPUINFO}" =~ "Gold 6148" ]]; then
     # Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz
-    PROG=$HOME/MCCCS/exe/topmon
+    PROG=/home/pb22a/MCCCS/exe/topmon
 elif [[ "${CPUINFO}" =~ "E5-2650 v3" ]]; then
     # Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz
-    PROG=$HOME/MCCCS/exe/topmon
+    PROG=/home/pb22a/MCCCS/exe/topmon
 elif [[ "${CPUINFO}" =~ "E5-2650 0" ]]; then
     # Intel(R) Xeon(R) CPU E5-2650 0 @ 2.00GHz
-    PROG=$HOME/MCCCS/exe/topmon
+    PROG=/home/pb22a/MCCCS/exe/topmon
 elif [[ "${CPUINFO}" =~ "6380" ]]; then
     # AMD Opteron(tm) Processor 6380 @ 2.5GHz
     :
@@ -34,7 +35,7 @@ elif [[ "${CPUINFO}" =~ "6278" ]]; then
     :
 else
     echo "Unknown CPU architecture: $CPUINFO"
-    PROG=$HOME/MCCCS/exe/topmon
+    PROG=/home/pb22a/MCCCS/exe/topmon
 fi
 
 source util-lsf.sh

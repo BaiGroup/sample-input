@@ -17,7 +17,7 @@ module add intel/20.4 intelmpi/20.4-intel20.4
 export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 MPIRUN='mpirun -np'
-PROG="$HOME/MCCCS/exe/topmon"
+PROG="/ocean/projects/cts190028p/MCCCS/exe/topmon"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

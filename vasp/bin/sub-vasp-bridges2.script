@@ -19,7 +19,7 @@ export MKL_ENABLE_INSTRUCTIONS=AVX2
 export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 MPIRUN='mpirun -np'
-PROG="$HOME/vasp-tools/hosts/bridges2/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
+PROG="/ocean/projects/cts190028p/shared/vasp-tools/hosts/bridges2/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

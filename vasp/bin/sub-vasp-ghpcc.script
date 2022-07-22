@@ -14,21 +14,22 @@ module add intel/parallel_studio_xe_2018_u3
 MPIRUN='mpirun -np'
 
 CPUINFO=$(lscpu | grep 'Model name:')
+# The code files are group accessible
 if [[ "${CPUINFO}" =~ "Gold 6140" || "${CPUINFO}" =~ "Gold 6148" ]]; then
     # Intel(R) Xeon(R) Gold 6140 CPU @ 2.30GHz / 6148 @ 2.4GHz
-    PROG=$HOME/vasp-tools/hosts/ghpcc/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst
+    PROG=/home/pb22a/vasp-tools/hosts/ghpcc/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst
 elif [[ "${CPUINFO}" =~ "E5-2650 v3" ]]; then
     # Intel(R) Xeon(R) CPU E5-2650 v3 @ 2.30GHz
-    PROG=$HOME/vasp-tools/hosts/mesabi/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol
+    PROG=/home/pb22a/vasp-tools/hosts/mesabi/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol
 elif [[ "${CPUINFO}" =~ "E5-2650 0" ]]; then
     # Intel(R) Xeon(R) CPU E5-2650 0 @ 2.00GHz
-    PROG=$HOME/vasp-tools/hosts/itasca/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol_sb
+    PROG=/home/pb22a/vasp-tools/hosts/itasca/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol_sb
 elif [[ "${CPUINFO}" =~ "6380" || "${CPUINFO}" =~ "6378" || "${CPUINFO}" =~ "6278" ]]; then
     # AMD Opteron(tm) Processor 6380 @ 2.5GHz / 6378 @ 2.4GHz / 6278 @ 2.4GHz
-    PROG=$HOME/vasp-tools/hosts/itasca/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol
+    PROG=/home/pb22a/vasp-tools/hosts/itasca/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol
 else
     echo "Unknown CPU architecture: $CPUINFO"
-    PROG=$HOME/vasp-tools/hosts/ghpcc/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst
+    PROG=/home/pb22a/vasp-tools/hosts/ghpcc/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst
 fi
 
 source util-lsf.sh
