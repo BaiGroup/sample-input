@@ -9,7 +9,7 @@ clean_up_last_run() {
   if [ -e NEWMODECAR ]; then
     _i=$(get_next_backup)
     mkdir RUN$_i
-    cp -a NEWMODECAR CENTCAR CONTCAR POSCAR MODECAR OUTCAR OSZICAR DIMCAR XDATCAR vaspout RUN$_i/
+    cp -a NEWMODECAR CENTCAR CONTCAR POSCAR MODECAR OUTCAR OSZICAR DIMCAR XDATCAR vaspout vasprun.xml RUN$_i/
     [ -s NEWMODECAR ] && mv NEWMODECAR MODECAR
     [ -s CENTCAR ] && mv CENTCAR POSCAR
     rm CONTCAR
@@ -18,14 +18,14 @@ clean_up_last_run() {
     mkdir RUN$_i
     for d in ??; do
       mkdir RUN$_i/$d
-      cp -a $d/CONTCAR $d/POSCAR $d/OUTCAR $d/OSZICAR $d/XDATCAR RUN$_i/$d/
+      cp -a $d/CONTCAR $d/POSCAR $d/OUTCAR $d/OSZICAR $d/XDATCAR $d/vasprun.xml RUN$_i/$d/
     done
     cp -a vaspout RUN$_i/
     find ?? -iname "CONTCAR" -execdir cp -a CONTCAR POSCAR \;
   elif [ -e CONTCAR ]; then
     _i=$(get_next_backup)
     mkdir RUN$_i
-    cp -a CONTCAR POSCAR OUTCAR OSZICAR XDATCAR vaspout RUN$_i/
+    cp -a CONTCAR POSCAR OUTCAR OSZICAR XDATCAR vaspout vasprun.xml RUN$_i/
     [ -s CONTCAR ] && mv CONTCAR POSCAR
   fi
 }
