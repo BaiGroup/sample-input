@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=48
+##SBATCH --mem=0
+#SBATCH --time=48:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=skx-normal
+
+#######################################################################
+module rm impi mvapich2
+module add tacc-singularity/3.7.2
+
+export PATH=$(echo $PATH | sed -e 's/:\.:/:/g' -e 's/:\.$//g' -e 's/^.:/:/')
+
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+#######################################################################
+MPIRUN="$ROOT/run_singularity.sh"
+
+if [ $ngpupernode -eq 0 ]; then
+  # CPU-only executable
+  SINGULARITY_IMAGE="$HOME/tools/singularity/compiler_aocc-slurm-pmi-spack.sif"
+  PROG="$HOME/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_aocc_ompi_aocl_vtst_slurm_pmi"
+
+  cat << EOF > $MPIRUN
+#!/usr/bin/env bash
+
+ibrun -n \$1 singularity exec --bind /opt $SINGULARITY_IMAGE "\${@:2}"
+EOF
+else
+  # GPU-enabled executable
+  SINGULARITY_IMAGE="$HOME/tools/singularity/compiler_nvhpc-cuda-slurm-pmi-spack.sif"
+  PROG="$HOME/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_nvhpc_ompi_omp_acc_vtst_slurm_pmi"
+
+  cat << EOF > $MPIRUN
+#!/usr/bin/env bash
+
+nprocpergpu=\$((\$1/$ngpuperjob))
+export OMP_NUM_THREADS=\$nprocpergpu
+export OMP_STACKSIZE=512m
+export OMP_PLACES=cores
+export OMP_PROC_BIND=close
+ibrun -n $ngpuperjob singularity exec --nv --bind /opt $SINGULARITY_IMAGE "\${@:2}"
+EOF
+fi
+
+chmod +x $MPIRUN
+#######################################################################
+source sub-vasp.script
+
+exit 0

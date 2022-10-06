@@ -11,16 +11,16 @@
 #SBATCH --partition=compute
 
 #######################################################################
-module rm intel
-module add intel/19.1.1.217 intel-mkl/2019.1.144 intel-mpi/2019.8.254
+module rm intel intel-mkl intel-mpi hdf5
+module add intel/19.1.1.217 intel-mkl/2019.1.144 intel-mpi/2019.8.254 hdf5/1.10.6
 
 export MKL_DEBUG_CPU_TYPE=5
 export MKL_ENABLE_INSTRUCTIONS=AVX2
+export I_MPI_PMI_LIBRARY=/cm/shared/apps/slurm/21.08.8/lib64/libpmi2.so
 
-#MPIRUN='ibrun --binding-level core -np'
-MPIRUN='mpirun -np'
+MPIRUN='srun -c 1 --cpu_bind=cores --mpi=pmi2 -n'
 # The code files are group accessible
-PROG="/home/baip/vasp-tools/hosts/expanse/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
+PROG="/home/baip/vasp-tools/hosts/expanse/vaspexec/vasp6.3.2_intel_impi_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

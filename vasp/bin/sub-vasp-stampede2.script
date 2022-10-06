@@ -11,14 +11,13 @@
 #SBATCH --partition=skx-normal
 
 #######################################################################
-module rm intel impi
-module add intel/18.0.2 impi/18.0.2
+module rm intel impi mvapich2 hdf5
+module add intel/18.0.2 impi/18.0.2 hdf5/1.10.4
 
 export PATH=$(echo $PATH | sed -e 's/:\.:/:/g' -e 's/:\.$//g' -e 's/^.:/:/')
 
 MPIRUN='ibrun -np'
-PROG="$HOME/vasp-tools/hosts/stampede2/vaspexec/vasp6.1.2_ifort_impi_mkl_vtst"
-#PROG="$HOME/vasp-tools/hosts/stampede2-knl/vaspexec/vasp5.4.1_ifort_impi_mkl_vtst_vaspsol"
+PROG="$HOME/vasp-tools/hosts/stampede2/vaspexec/vasp6.3.2_intel_impi_mkl_vtst"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

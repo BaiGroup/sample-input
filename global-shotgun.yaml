@@ -260,6 +260,13 @@ targets:
     cpus_per_node: 48
     queue: skx-normal
     time: 48
+  stampede2-icx:
+    host: stampede2
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 80
+    queue: icx-normal
+    time: 48
   stampede2-knl:
     host: stampede2
     scheduler: slurm

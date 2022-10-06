@@ -12,6 +12,7 @@
 #SBATCH --license=SCRATCH
 
 #######################################################################
+# The code files are group accessible
 export g16root='/global/common/software/m3393/tools/gaussian/g16.a03'
 export GV_DIR='/global/common/software/m3393/tools/gaussian/gaussview-6.0.16'
 export GAUSS_MEMDEF=100000000

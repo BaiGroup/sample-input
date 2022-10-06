@@ -49,6 +49,8 @@ targets:
 # XSEDE UTexas
   stampede2:
     job_root: $SCRATCH/ABC
+  stampede2-icx:
+    job_root: $SCRATCH/ABC
   stampede2-knl:
     job_root: $SCRATCH/ABC
 # NERSC

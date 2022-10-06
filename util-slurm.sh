@@ -13,9 +13,10 @@ else
   # CPUs
   hyperthreading=$(scontrol show node ${NODE[0]} | gawk '/ThreadsPerCore=/{split($2,hyperthreading,"="); print hyperthreading[2]}')
   nprocpernode=$((SLURM_CPUS_ON_NODE/hyperthreading))
-  [ -z "$SLURM_TASKS_PER_NODE" ] && SLURM_TASKS_PER_NODE=$SLURM_NTASKS_PER_NODE
-  SLURM_TASKS_PER_NODE="$(echo $SLURM_TASKS_PER_NODE | sed -E 's/\(x[0-9]+\)//')"
-  nproc_requested=$((SLURM_TASKS_PER_NODE*SLURM_CPUS_PER_TASK))
+  ntaskspernode=$SLURM_TASKS_PER_NODE
+  [ -z "$SLURM_TASKS_PER_NODE" ] && ntaskspernode=$SLURM_NTASKS_PER_NODE
+  ntaskspernode="$(echo $ntaskspernode | sed -E 's/\(x[0-9]+\)//')"
+  nproc_requested=$((ntaskspernode*SLURM_CPUS_PER_TASK))
   if [ "$nproc_requested" -lt "$nprocpernode" ]; then
     echo "! == NOTE: Using only $nproc_requested out of $nprocpernode allocated CPUs == !"
     echo

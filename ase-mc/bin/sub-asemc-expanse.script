@@ -22,7 +22,6 @@ source $HOME/tools/conda/bin/activate conda3.9
 export PYTHONPATH="$HOME/MCCCS/exe:$HOME/tools/lammps/intel-impi-mkl/lib/python3.9/site-packages${PYTHONPATH:+:$PYTHONPATH}"
 export LD_LIBRARY_PATH="$HOME/MCCCS/exe:$HOME/tools/lammps/intel-impi-mkl/lib64:$HOME/tools/conda/envs/conda3.9/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-#MPIRUN='ibrun --binding-level core -np'
 MPIRUN='mpirun -np'
 PROG='./fpms.py'
 
