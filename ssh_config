@@ -70,7 +70,7 @@ Host *.emsl.pnl.gov
 Host bitbucket.org
   ControlPath none
 Host baigroup
-  HostName baigroup.duckdns.org
+  HostName server.bai.group
   User CHANGE_THIS
 Host ghpcc??
   HostName %h.umassrc.org
