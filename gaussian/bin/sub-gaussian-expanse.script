@@ -11,6 +11,8 @@
 #SBATCH --partition=compute
 
 #######################################################################
+module rm cpu
+module add cpu/0.15.5
 module add gaussian/16.C.01
 PROG="$(which g16)"
 
