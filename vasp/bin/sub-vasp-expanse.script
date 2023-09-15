@@ -11,7 +11,8 @@
 #SBATCH --partition=compute
 
 #######################################################################
-module rm intel intel-mkl intel-mpi hdf5
+module rm intel intel-mkl intel-mpi hdf5 cpu
+module add cpu/0.15.4
 module add intel/19.1.1.217 intel-mkl/2019.1.144 intel-mpi/2019.8.254 hdf5/1.10.6
 
 export MKL_DEBUG_CPU_TYPE=5

@@ -81,67 +81,67 @@ targets:
     constraint: amd,avx2
     time: 168
     mem_per_cpu: 2015
-  unity-24Cx2: # cpu[001-008]
+  unity-24C: # cpu[001-008]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 48
+    cpus_per_node: 24 
     queue: cpu
-    constraint: len_sd530_2018,avx,avx2,avx512,intel,linux-ubuntu20.04-skylake_avx512
+    constraint: intel6126,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
-    mem_per_cpu: 4020
-  unity-24Cx2-384G: # cpu[002-004]
+    mem_per_cpu: 8040
+  unity-24C-384G: # cpu[002-004]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 48
+    cpus_per_node: 24
     queue: cpu
-    constraint: len_sd530_2018,avx,avx2,avx512,intel,linux-ubuntu20.04-skylake_avx512
+    constraint: intel6126,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
-    mem_per_cpu: 8047
-  unity-40Cx2: # cpu[013-025]
+    mem_per_cpu: 16095
+  unity-40C: # cpu[013-025]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 80
+    cpus_per_node: 40
     queue: cpu
-    constraint: dell_r640_2020,avx,avx2,avx512,intel,linux-ubuntu20.04-skylake_avx512
+    constraint: intel6148,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
-    mem_per_cpu: 2400
-  unity-preempt-24Cx2: # ceewater-cpu[001-007]
+    mem_per_cpu: 4800
+  unity-preempt-24C: # ceewater-cpu[001-007]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 48
+    cpus_per_node: 24
     queue: cpu-preempt
-    constraint: cee_len_sr635_2020,avx,avx2,amd,linux-ubuntu20.04-zen2
+    constraint: amd7402,amd,zen2,x86_64_v3,x86_64 
     time: 168
-    mem_per_cpu: 2682
-  unity-preempt-16Cx2: # astroth-cpu[001-008]
+    mem_per_cpu: 4774
+  unity-preempt-16C: # astroth-cpu[001-008]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 32
+    cpus_per_node: 16
     queue: cpu-preempt
-    constraint: astro_smicro_sbi4429pt2n_2021,avx,avx2,avx512,intel,linux-ubuntu20.04-cascadelake
+    constraint: intel4215r,avx512,intel,cascadelake,x86_64_v4,x86_64
     time: 168
-    mem_per_cpu: 5522
-  unity-preempt-128Cx2: # zhoulin-cpu[001-006]
+    mem_per_cpu: 11044
+  unity-preempt-128C: # zhoulin-cpu[001-006]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 256
+    cpus_per_node: 128
     queue: cpu-preempt
-    constraint: zhoulin_sr645_cpu_2021,avx,avx2,amd,linux-ubuntu20.04-zen2
+    constraint: amd7702,amd,zen2,x86_64_v3,x86_64
     time: 168
-    mem_per_cpu: 2015
+    mem_per_cpu: 4030
   unity-preempt-32C: # toltec-cpu[001-006]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 32
     queue: cpu-preempt
-    constraint: toltec_r640_cpu_2021,avx,avx2,avx512,intel,linux-ubuntu20.04-cascadelake
+    constraint: intel5218,avx512,intel,cascadelake,x86_64_v4,x86_64
     time: 168
     mem_per_cpu: 12049
   # UMass Unity GPU
@@ -152,9 +152,9 @@ targets:
     cpus_per_node: 32
     gpu: v100:2
     queue: gpu-long
-    constraint: len_sr650_2018,avx,avx2,avx512,v100,intel,linux-ubuntu20.04-skylake_avx512
+    constraint: avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
     time: 168
-    mem_per_cpu: 2665
+    mem_per_cpu: 5330
   unity-gpu-preempt:
     host: unity
     scheduler: slurm
@@ -162,97 +162,107 @@ targets:
     cpus_per_node: 16
     queue: gpu-preempt
     time: 168
-    mem_per_cpu: 2001
-  unity-16Cx2-2G: # gpu[001-002]
-    host: unity
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 32
-    gpu: v100:2
-    queue: gpu
-    constraint: len_sr650_2018,avx,avx2,avx512,v100,intel,linux-ubuntu20.04-skylake_avx512
-    time: 24
-    mem_per_cpu: 6025
-  unity-36Cx2-2G: # gpu[003-004]
-    host: unity
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 72
-    gpu: v100:2
-    queue: gpu
-    constraint: len_sr650_2018,avx,avx2,avx512,v100,intel,linux-ubuntu20.04-skylake_avx512
-    time: 24
-    mem_per_cpu: 2665
-  unity-24Cx2-8G: # ials-gpu[001-033]
-    host: unity
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 48
-    gpu: 2080ti:8
-    queue: ials-gpu
-    constraint: ials_gigabyte_gpu_2020,avx,avx2,avx512,2080ti,intel,linux-ubuntu20.04-cascadelake
-    time: 168
-    mem_per_cpu: 3998
-  unity-8Cx2-2G: # astroth-gpu[001-003]
+    mem_per_cpu: 4002
+  unity-16C-2G: # gpu[001-002]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 16
+    gpu: v100:2
+    queue: gpu
+    constraint: intel4110,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16 
+    time: 24
+    mem_per_cpu: 12051
+  unity-36C-2G: # gpu[003-004]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 36
+    gpu: v100:2
+    queue: gpu
+    constraint: intel6140,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
+    time: 24
+    mem_per_cpu: 5330
+  unity-24C-8G: # ials-gpu[001-033]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    gpu: 2080ti:8
+    queue: ials-gpu
+    constraint: intel4110,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
+    time: 168
+    mem_per_cpu: 7996
+  unity-8C-2G: # astroth-gpu[001-003]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 8
     gpu: 2080:2
     queue: gpu-preempt
-    constraint: astro_asrock_x399_2020,avx,avx2,2080,intel,linux-ubuntu20.04-zen
+    constraint: amd1900x,2080,amd,zen,x86_64_v3,x86_64,sm_52,sm_61,sm_70,sm_75,vram8
     time: 168
-    mem_per_cpu: 2001
-  unity-128Cx2-4G: # ece-gpu[001-002]
+    mem_per_cpu: 4002
+  unity-32C-4G: # ece-gpu[001-002]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 64
+    cpus_per_node: 32
     gpu: a100:4
     queue: gpu-preempt
-    constraint: ece_sr670_gpu_2021,avx,avx2,avx512,a100,intel
+    constraint: intel6226r,avx512,a100,a100-40g,intel,sm_52,sm_61,sm_70,sm_75,sm_80,vram8,vram11,vram12,vram16,vram23,vram32,vram40
     time: 168
-    mem_per_cpu: 6039
-  unity-12Cx2-4G-m40: # gypsum-gpu[001-025]
+    mem_per_cpu: 12062
+  unity-12C-4G-m40: # gypsum-gpu[001-025]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 24
+    cpus_per_node: 12
     gpu: m40:4
     queue: gpu-preempt
-    constraint: linux-ubuntu20.04-haswell
+    constraint: intel2620v3,haswell,x86_64_v3,x86_64,m40,sm_52,vram8,vram11,vram12,vram16,vram23
     time: 168
-    mem_per_cpu: 10743
-  unity-12Cx2-4G-titanx: # gypsum-gpu[026-099]
+    mem_per_cpu: 21487
+  unity-12C-4G-titanx: # gypsum-gpu[043-099]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 12
+    gpu: titanx:4
+    queue: gpu-preempt
+    constraint: intel2620v3,haswell,x86_64_v3,x86_64,titanx,sm_52,vram8,vram11,vram12
+    time: 168
+    mem_per_cpu: 21487
+  unity-24C-8G-1080ti: # gypsum-gpu[104-156]
     host: unity
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 24
-    gpu: titanx:4
-    queue: gpu-preempt
-    constraint: linux-ubuntu20.04-haswell
-    time: 168
-    mem_per_cpu: 10743
-  unity-24Cx2-8G-1080ti: # gypsum-gpu[104-156]
-    host: unity
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 48
     gpu: 1080ti:8
     queue: gpu-preempt
-    constraint: linux-ubuntu20.04-skylake_avx512
+    constraint: intel4116,skylake_avx512,x86_64_v4,x86_64,1080ti,sm_52,sm_61,vram8,vram11
     time: 168
-    mem_per_cpu: 8033
-  unity-24Cx2-8G-2080ti: # gypsum-gpu[157-181]
+    mem_per_cpu: 16060
+  unity-24C-8G-2080ti: # gypsum-gpu[157-181]
     host: unity
     scheduler: slurm
     skip_pingback: True
-    cpus_per_node: 48
+    cpus_per_node: 24
     gpu: 2080ti:8
     queue: gpu-preempt
-    constraint: linux-ubuntu20.04-skylake_avx512
+    constraint: intel4116,skylake_avx512,x86_64_v4,x86_64,2080ti,2080ti_11,sm_52,sm_61,sm_70,sm_75,vram8,vram11
     time: 168
-    mem_per_cpu: 8033
+    mem_per_cpu: 16060
+  unity-24C-8G-rtx8000: # gypsum-gpu[182-189]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 24
+    gpu: rtx8000:8
+    queue: gpu-preempt
+    constraint: intel4116,skylake_avx512,x86_64_v4,x86_64,rtx8000,sm_52,sm_61,sm_70,sm_75,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48
+    time: 168
+    mem_per_cpu: 16060
 # XSEDE UTexas
   stampede2:
     scheduler: slurm

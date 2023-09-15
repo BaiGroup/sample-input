@@ -11,7 +11,8 @@
 #SBATCH --partition=compute
 
 #######################################################################
-module rm gcc intel-mpi
+module rm gcc intel-mpi cpu
+module add cpu/0.15.4
 module add gcc/10.2.0
 module add intel-mpi/2019.8.254
 
