@@ -2,7 +2,28 @@ SERVER: http://baigroup.duckdns.org
 TOKEN: USE_GENERATED_TOKEN
 VAULT: /home/CHANGE_THIS/shotgun.sqlite
 targets:
-# XSEDE JHU
+# ACCESS UIUC
+  delta:
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: cpu
+    constraint: scratch
+    time: 48
+    mem_per_cpu: 1971
+    account: bbwx-delta-cpu
+  delta-gpu:
+    host: delta
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: gpuA100x4
+    gpu: 1
+    constraint: scratch
+    time: 48
+    mem_per_cpu: 3842
+    account: bbwx-delta-gpu
+# ACCESS JHU
   rockfish:
     scheduler: slurm
     skip_pingback: True
@@ -10,7 +31,7 @@ targets:
     queue: defq
     time: 72
     mem_per_cpu: 4023
-# XSEDE Purdue
+# ACCESS Purdue
   anvil:
     scheduler: slurm
     skip_pingback: True
@@ -18,7 +39,7 @@ targets:
     queue: shared
     time: 96
     mem_per_cpu: 1918
-# XSEDE PSC
+# ACCESS PSC
   bridges2:
     scheduler: slurm
     skip_pingback: True
@@ -26,7 +47,7 @@ targets:
     queue: RM-shared
     time: 48
     mem_per_cpu: 1976
-# XSEDE SDSC
+# ACCESS SDSC
   expanse:
     scheduler: slurm
     skip_pingback: True
@@ -36,7 +57,7 @@ targets:
     time: 48
     mem_per_cpu: 1947
     account: umn127
-# XSEDE UDel
+# ACCESS UDel
   darwin:
     scheduler: slurm
     skip_pingback: True
@@ -45,7 +66,7 @@ targets:
     time: 168
     mem_per_cpu: 7808
     command_decorator: sg xg-cts190069 "${command}"
-# XSEDE UKy
+# ACCESS UKy
   kyric:
     scheduler: slurm
     skip_pingback: True
@@ -263,7 +284,7 @@ targets:
     constraint: intel4116,skylake_avx512,x86_64_v4,x86_64,rtx8000,sm_52,sm_61,sm_70,sm_75,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48
     time: 168
     mem_per_cpu: 16060
-# XSEDE UTexas
+# ACCESS UTexas
   stampede2:
     scheduler: slurm
     skip_pingback: True

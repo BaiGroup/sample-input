@@ -4,24 +4,29 @@ upload_excludes: ['job.yaml', '.nfs*', 'WAVECAR']
 delete_excluded: False
 local_asset_dir: $HOME/projects/ABC/bin
 targets:
-# XSEDE JHU
+# ACCESS UIUC
+  delta:
+    job_root: /scratch/bbwx/$USER/projects/ABC
+  delta-gpu:
+    job_root: /scratch/bbwx/$USER/projects/ABC
+# ACCESS JHU
   rockfish:
   # $SCRATCH4 sometimes not set
     job_root: /scratch4/$USER/ABC
-# XSEDE Purdue
+# ACCESS Purdue
   anvil:
     job_root: $SCRATCH/ABC
-# XSEDE PSC
+# ACCESS PSC
   bridges2:
     job_root: $PROJECT/ABC
-# XSEDE SDSC
+# ACCESS SDSC
   expanse:
     job_root: /expanse/lustre/scratch/$USER/temp_project/ABC
-# XSEDE UDel
+# ACCESS UDel
   darwin:
   # $WORKDIR_SW sometimes not set
     job_root: /lustre/xg-cts190069/users/$UID/ABC
-# XSEDE UKy
+# ACCESS UKy
   kyric:
   # $SCRATCH sometimes not set
     job_root: $HOME/projects/ABC
@@ -71,7 +76,7 @@ targets:
     job_root: $USER/projects/ABC
   unity-24-8G-rtx8000:
     job_root: $USER/projects/ABC
-# XSEDE UTexas
+# ACCESS UTexas
   stampede2:
     job_root: $SCRATCH/ABC
   stampede2-icx:

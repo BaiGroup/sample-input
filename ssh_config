@@ -1,3 +1,7 @@
+Host delta
+  Hostname login.%h.ncsa.illinois.edu
+  User CHANGE_THIS
+  ControlPersist 168h
 Host rockfish marcc
   Hostname login.%h.jhu.edu
   User CHANGE_THIS
