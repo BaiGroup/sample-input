@@ -13,17 +13,42 @@ targets:
   rockfish:
   # $SCRATCH4 sometimes not set
     job_root: /scratch4/$USER/ABC
+  rockfish-gpu:
+  # $SCRATCH4 sometimes not set
+    job_root: /scratch4/$USER/ABC
 # ACCESS Purdue
   anvil:
+    job_root: $SCRATCH/ABC
+  anvil-gpu:
     job_root: $SCRATCH/ABC
 # ACCESS PSC
   bridges2:
     job_root: $PROJECT/ABC
+  bridges2-gpu:
+    job_root: $PROJECT/ABC
+  bridges2-ai-1:
+    job_root: $PROJECT/ABC
+  bridges2-ai-2:
+    job_root: $PROJECT/ABC
 # ACCESS SDSC
   expanse:
     job_root: /expanse/lustre/scratch/$USER/temp_project/ABC
+  expanse-gpu:
+    job_root: /expanse/lustre/scratch/$USER/temp_project/ABC
 # ACCESS UDel
   darwin:
+  # $WORKDIR_SW sometimes not set
+    job_root: /lustre/xg-cts190069/users/$UID/ABC
+  darwin-gpu-t4:
+  # $WORKDIR_SW sometimes not set
+    job_root: /lustre/xg-cts190069/users/$UID/ABC
+  darwin-gpu-v100:
+  # $WORKDIR_SW sometimes not set
+    job_root: /lustre/xg-cts190069/users/$UID/ABC
+  darwin-gpu-mi50:
+  # $WORKDIR_SW sometimes not set
+    job_root: /lustre/xg-cts190069/users/$UID/ABC
+  darwin-gpu-mi100:
   # $WORKDIR_SW sometimes not set
     job_root: /lustre/xg-cts190069/users/$UID/ABC
 # ACCESS UKy

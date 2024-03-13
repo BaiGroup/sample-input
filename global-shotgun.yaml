@@ -31,6 +31,14 @@ targets:
     queue: defq
     time: 72
     mem_per_cpu: 4023
+  rockfish-gpu:
+    host: rockfish
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: a100
+    time: 48
+    mem_per_cpu: 4023
 # ACCESS Purdue
   anvil:
     scheduler: slurm
@@ -39,6 +47,14 @@ targets:
     queue: shared
     time: 96
     mem_per_cpu: 1918
+  anvil-gpu:
+    host: anvil
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: gpu
+    time: 48
+    mem_per_cpu: 4026
 # ACCESS PSC
   bridges2:
     scheduler: slurm
@@ -47,6 +63,33 @@ targets:
     queue: RM-shared
     time: 48
     mem_per_cpu: 1976
+  bridges2-gpu:
+    host: bridges2
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 40
+    queue: gpu
+    gpu: v100-32:8
+    time: 48
+    mem_per_cpu: 12646
+  bridges2-ai-1:
+    host: bridges2
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 40
+    queue: gpu
+    gpu: v100-16:8
+    time: 48
+    mem_per_cpu: 4742
+  bridges2-ai-2:
+    host: bridges2
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: gpu
+    gpu: v-100-32:16
+    time: 48
+    mem_per_cpu: 31616
 # ACCESS SDSC
   expanse:
     scheduler: slurm
@@ -55,7 +98,17 @@ targets:
     queue: shared
     constraint: lustre
     time: 48
-    mem_per_cpu: 1947
+    mem_per_cpu: 2010
+    account: umn127
+  expanse-gpu:
+    host: expanse
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: gpu-shared
+    constraint: lustre
+    time: 48
+    mem_per_cpu: 9637
     account: umn127
 # ACCESS UDel
   darwin:
@@ -65,6 +118,42 @@ targets:
     queue: standard
     time: 168
     mem_per_cpu: 7808
+    command_decorator: sg xg-cts190069 "${command}"
+  darwin-gpu-t4:
+    host: darwin
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: gpu-t4
+    time: 168
+    mem_per_cpu: 7680
+    command_decorator: sg xg-cts190069 "${command}"
+  darwin-gpu-v100:
+    host: darwin
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 48
+    queue: gpu-v100
+    time: 168
+    mem_per_cpu: 15360
+    command_decorator: sg xg-cts190069 "${command}"
+  darwin-gpu-mi50:
+    host: darwin
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: gpu-mi50
+    time: 168
+    mem_per_cpu: 7680
+    command_decorator: sg xg-cts190069 "${command}"
+  darwin-gpu-mi100:
+    host: darwin
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: gpu-mi100
+    time: 168
+    mem_per_cpu: 7680
     command_decorator: sg xg-cts190069 "${command}"
 # ACCESS UKy
   kyric:
