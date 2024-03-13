@@ -40,7 +40,7 @@ Host unity
   User CHANGE_THIS
 Host *.rc.umass.edu
   User CHANGE_THIS
-Host stampede2
+Host stampede3
   Hostname %h.tacc.utexas.edu
   User CHANGE_THIS
   ControlPersist 168h

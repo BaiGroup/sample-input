@@ -285,26 +285,19 @@ targets:
     time: 168
     mem_per_cpu: 16060
 # ACCESS UTexas
-  stampede2:
+  stampede3:
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 48
-    queue: skx-normal
-    time: 48
-  stampede2-icx:
-    host: stampede2
+    queue: skx
+    time: 24
+  stampede3-icx:
+    host: stampede3
     scheduler: slurm
     skip_pingback: True
     cpus_per_node: 80
-    queue: icx-normal
-    time: 48
-  stampede2-knl:
-    host: stampede2
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 68
-    queue: normal
-    time: 48
+    queue: icx
+    time: 24
 # NERSC
   cori:
     scheduler: slurm

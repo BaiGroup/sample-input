@@ -4,17 +4,23 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=48
 ##SBATCH --mem=0
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH --job-name=name
 #SBATCH --output stdout.%j
 #SBATCH --error stderr.%j
-#SBATCH --partition=skx-normal
+#SBATCH --partition=skx
 
 #######################################################################
-module add lammps/9Jan20
+module rm intel* mpi*
+module load intel/24.0 mpi/21.11
 
 MPIRUN='ibrun -np'
-PROG="$(which lmp_stampede)"
+# The code files are group accessible
+BASEDIR="/work2/06327/baip/tools/lammps/intel-impi-mkl"
+
+export PATH="${PATH:+$PATH:}$BASEDIR/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$BASEDIR/lib64"
+PROG="$BASEDIR/bin/lmp"
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")

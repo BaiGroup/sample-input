@@ -77,12 +77,10 @@ targets:
   unity-24-8G-rtx8000:
     job_root: $USER/projects/ABC
 # ACCESS UTexas
-  stampede2:
-    job_root: $SCRATCH/ABC
-  stampede2-icx:
-    job_root: $SCRATCH/ABC
-  stampede2-knl:
-    job_root: $SCRATCH/ABC
+  stampede3:
+    job_root: /scratch/XYZ/$USER/ABC
+  stampede3-icx:
+    job_root: /scratch/XYZ/$USER/ABC
 # NERSC
   cori:
     job_root: $SCRATCH/ABC
