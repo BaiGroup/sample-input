@@ -22,18 +22,18 @@ MPIRUN="$ROOT/run_singularity.sh"
 # The code files are group accessible
 if [ $ngpupernode -eq 0 ]; then
   # CPU-only executable
-  SINGULARITY_IMAGE='/u/baixx064/tools/singularity/compiler_aocc-slurm-pmi-spack.sif'
-  PROG='/u/baixx064/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_aocc_ompi_aocl_vtst_slurm_pmi'
+  SINGULARITY_IMAGE='/taiga/nsf/delta/bbwx/shared/tools/singularity/compiler_aocc-slurm-pmi-spack.sif'
+  PROG='/taiga/nsf/delta/bbwx/shared/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_aocc_ompi_aocl_vtst_slurm_pmi'
 
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
 
-srun -c 1 --cpu_bind=cores --mpi=pmi2 -n \$1 singularity exec --bind /delta,/scratch,/u/baixx064 $SINGULARITY_IMAGE "\${@:2}"
+srun -c 1 --cpu_bind=cores --mpi=pmi2 -n \$1 singularity exec --bind /delta,/scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
 EOF
 else
   # GPU-enabled executable
-  SINGULARITY_IMAGE='/u/baixx064/tools/singularity/compiler_nvhpc-cuda-slurm-pmi-spack.sif'
-  PROG='/u/baixx064/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_nvhpc_ompi_omp_acc_vtst_slurm_pmi'
+  SINGULARITY_IMAGE='/taiga/nsf/delta/bbwx/shared/tools/singularity/compiler_nvhpc-cuda-slurm-pmi-spack.sif'
+  PROG='/taiga/nsf/delta/bbwx/shared/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_nvhpc_ompi_omp_acc_vtst_slurm_pmi'
 
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
@@ -43,7 +43,7 @@ export OMP_NUM_THREADS=\$nprocpergpu
 export OMP_STACKSIZE=512m
 export OMP_PLACES=cores
 export OMP_PROC_BIND=close
-srun -c 1 --cpu_bind=cores --mpi=pmi2 -n $ngpuperjob singularity exec --nv --bind /delta,/scratch,/u/baixx064 $SINGULARITY_IMAGE "\${@:2}"
+srun -c 1 --cpu_bind=cores --mpi=pmi2 -n $ngpuperjob singularity exec --nv --bind /delta,/scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
 EOF
 fi
 
