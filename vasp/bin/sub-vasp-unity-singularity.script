@@ -13,7 +13,7 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
+[ -d '/work/pi_pengbai_umass_edu/unitymodules' ] && module use --append /work/pi_pengbai_umass_edu/unitymodules
 module add singularity/3.7.0 openmpi/4.1.0
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
@@ -25,18 +25,18 @@ MPIRUN="$ROOT/run_singularity.sh"
 # The code files are group accessible
 if [ $ngpupernode -eq 0 ]; then
   # CPU-only executable
-  SINGULARITY_IMAGE='/work/pengbai_umass_edu/singularity/compiler_aocc-spack.sif'
-  PROG='/work/pengbai_umass_edu/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_aocc_ompi_aocl_vtst'
+  SINGULARITY_IMAGE='/work/pi_pengbai_umass_edu/singularity/compiler_aocc-spack.sif'
+  PROG='/work/pi_pengbai_umass_edu/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_aocc_ompi_aocl_vtst'
 
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
 
-mpirun -np \$1 singularity exec --bind $TMP,/work/$USER,/work/pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
+mpirun -np \$1 singularity exec --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
 EOF
 else
   # GPU-enabled executable
-  SINGULARITY_IMAGE='/work/pengbai_umass_edu/singularity/compiler_nvhpc-cuda-spack.sif'
-  PROG='/work/pengbai_umass_edu/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_nvhpc_ompi_omp_acc_vtst'
+  SINGULARITY_IMAGE='/work/pi_pengbai_umass_edu/singularity/compiler_nvhpc-cuda-spack.sif'
+  PROG='/work/pi_pengbai_umass_edu/vasp-tools/hosts/docker/vaspexec/vasp6.3.2_nvhpc_ompi_omp_acc_vtst'
 
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
@@ -46,7 +46,7 @@ export OMP_NUM_THREADS=\$nprocpergpu
 export OMP_STACKSIZE=512m
 export OMP_PLACES=cores
 export OMP_PROC_BIND=close
-mpirun -np $ngpuperjob --map-by socket --bind-to core singularity exec --nv --bind $TMP,/work/$USER,/work/pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
+mpirun -np $ngpuperjob --map-by socket --bind-to core singularity exec --nv --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
 EOF
 fi
 

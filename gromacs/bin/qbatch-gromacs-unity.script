@@ -13,7 +13,7 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
+[ -d '/work/pi_pengbai_umass_edu/unitymodules' ] && module use --append /work/pi_pengbai_umass_edu/unitymodules
 module rm parallel_studio_xe gcc
 module add parallel_studio_xe/2020.2 gcc/10.2.0
 
@@ -21,7 +21,7 @@ export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 MPIRUN='mpirun -np'
 # The code files are group accessible
-BASEDIR="/work/pengbai_umass_edu/tools/gromacs-2019.3/gcc-double-impi-fftw"
+BASEDIR="/work/pi_pengbai_umass_edu/tools/gromacs-2019.3/gcc-double-impi-fftw"
 export PATH="$BASEDIR/bin:$PATH"
 export LD_LIBRARY_PATH="$BASEDIR/lib:$LD_LIBRARY_PATH"
 PROG="$BASEDIR/bin/gmx_mpi_d"

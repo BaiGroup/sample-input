@@ -14,17 +14,17 @@
 CPUINFO=$(lscpu | grep 'Model name:')
 if [[ "${CPUINFO}" =~ "Intel" ]]; then
     # Intel CPUs
-  export g16root='/work/pengbai_umass_edu/tools/gaussian/g16.c01.avx2'
+  export g16root='/work/pi_pengbai_umass_edu/tools/gaussian/g16.c01.avx2'
 elif [[ "${CPUINFO}" =~ "AMD" ]]; then
     # AMD CPUs
-  export g16root='/work/pengbai_umass_edu/tools/gaussian/g16.c01.zen2'
+  export g16root='/work/pi_pengbai_umass_edu/tools/gaussian/g16.c01.zen2'
 else
     # Unknown CPU architecture
     :
 fi
 
 # The code files are group accessible
-export GV_DIR='/work/pengbai_umass_edu/tools/gaussian/gaussview-6.0.16'
+export GV_DIR='/work/pi_pengbai_umass_edu/tools/gaussian/gaussview-6.0.16'
 export GAUSS_MEMDEF=100000000
 export GAUSS_EXEDIR="$g16root/bsd:$g16root/local:$g16root/extras:$g16root"
 export PERLLIB="$g16root/bsd"

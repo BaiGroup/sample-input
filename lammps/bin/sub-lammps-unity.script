@@ -13,7 +13,7 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-[ -d '/work/pengbai_umass_edu/unitymodules' ] && module use --append /work/pengbai_umass_edu/unitymodules
+[ -d '/work/pi_pengbai_umass_edu/unitymodules' ] && module use --append /work/pi_pengbai_umass_edu/unitymodules
 module rm icc gcc
 module add icc/2022.2.3
 module add mkl/2022.3.1 intel-oneapi-mpi/2022.3.1
@@ -26,7 +26,7 @@ fi
 export I_MPI_JOB_RESPECT_PROCESS_PLACEMENT=0
 
 # The code files are group accessible
-BASEDIR="/work/pengbai_umass_edu/tools/lammps/intel-impi-mkl"
+BASEDIR="/work/pi_pengbai_umass_edu/tools/lammps/intel-impi-mkl"
 
 MPIRUN='mpirun -np'
 export PATH="$BASEDIR/bin:$PATH"
