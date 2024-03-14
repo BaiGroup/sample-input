@@ -8,10 +8,9 @@ run_lammps() {
     cp -f restart.2 restart
     mv -f restart.2 restart.$FCUR
     [ -e screen ] && mv -f screen screen.$FCUR
-    [ -e movie.dat ] && mv -f movie.dat movie.$FCUR
+    [ -e movie.lammpstrj ] && mv -f movie.lammpstrj movie.$FCUR.lammpstrj
+    [ -e movie.lammpstrj.xtc ] && mv -f movie.lammpstrj.xtc movie.$FCUR.lammpstrj.xtc
     [ -e energy.dat ] && mv -f energy.dat energy.$FCUR
-    [ -e msd.dat ] && mv -f msd.dat msd.$FCUR
-    [ -e rdf.dat ] && mv -f rdf.dat rdf.$FCUR
 }
 
 get_next_backup() {

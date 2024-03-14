@@ -56,51 +56,52 @@ targets:
   # $SCRATCH sometimes not set
     job_root: $HOME/projects/ABC
 # UMass Unity
+  # workspace ABC must first be created with `ws-allocate ABC 30` on Unity
   unity-intel-avx512:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-intel-avx2:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-amd-avx2:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24C:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24C-384G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-40C:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
+  # unity-preempt-16C:
+    # job_root: /scratch/workspace/${USER}-ABC
   unity-preempt-24C:
-    job_root: $USER/projects/ABC
-  unity-preempt-16C:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-preempt-128C:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-preempt-32C:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
 # UMass Unity GPU
   unity-gpu:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-gpu-preempt:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-16C-2G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-36C-2G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24C-8G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-8C-2G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-32C-4G:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-12C-4G-m40:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-12C-4G-titanx:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24C-8G-1080ti:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24C-8G-2080ti:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
   unity-24-8G-rtx8000:
-    job_root: $USER/projects/ABC
+    job_root: /scratch/workspace/${USER}-ABC
 # ACCESS UTexas
   stampede3:
     job_root: /scratch/XYZ/$USER/ABC

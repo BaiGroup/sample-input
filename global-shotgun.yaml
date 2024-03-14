@@ -227,15 +227,15 @@ targets:
     constraint: amd7402,amd,zen2,x86_64_v3,x86_64 
     time: 168
     mem_per_cpu: 4774
-  unity-preempt-16C: # astroth-cpu[001-008]
-    host: unity
-    scheduler: slurm
-    skip_pingback: True
-    cpus_per_node: 16
-    queue: cpu-preempt
-    constraint: intel4215r,avx512,intel,cascadelake,x86_64_v4,x86_64
-    time: 168
-    mem_per_cpu: 11044
+  # unity-preempt-16C: # astroth-cpu[001-008]
+  #   host: unity
+  #   scheduler: slurm
+  #   skip_pingback: True
+  #   cpus_per_node: 16
+  #   queue: cpu-preempt
+  #   constraint: intel4215r,avx512,intel,cascadelake,x86_64_v4,x86_64
+  #   time: 168
+  #   mem_per_cpu: 11044
   unity-preempt-128C: # zhoulin-cpu[001-006]
     host: unity
     scheduler: slurm
