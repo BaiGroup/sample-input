@@ -6,11 +6,6 @@ gromacs/Ar
 gromacs/CH4-MFI
 gromacs/nC6-SPP
 gromacs/trappe.ff
-lammps/ethanol-MFI
-lammps/MIL-101-PC-LiCl
-lammps/nC18-rutile110
-lammps/nC18-tZrO2
-lammps/water-MFI
 packmol/
 topmon/adsorption
 topmon/rxmc
