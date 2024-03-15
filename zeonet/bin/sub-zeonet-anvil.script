@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+#SBATCH -A cts190069-gpu
+#SBATCH --nodes=1
+#SBATCH --gpus-per-node=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=48:00:00
+#SBATCH --job-name=regression
+##SBATCH --mem=0
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=gpu
+#######################################################################
+module add modtree/gpu
+module add anaconda/2021.05-py38
+eval "$(conda shell.bash hook)"
+conda activate zeonet
+#######################################################################
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+source sub-zeonet.script
+
+exit 0

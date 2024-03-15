@@ -300,9 +300,9 @@ targets:
     cpus_per_node: 24
     gpu: 2080ti:8
     queue: ials-gpu
-    constraint: intel4110,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
-    time: 168
-    mem_per_cpu: 7996
+    constraint: 2080ti,avx512,cascadelake,intel,intel4214r,sm_52,sm_61,sm_70,sm_75,vram8,vram11,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 336
+    mem_per_cpu: 7979
   unity-8C-2G: # astroth-gpu[001-003]
     host: unity
     scheduler: slurm

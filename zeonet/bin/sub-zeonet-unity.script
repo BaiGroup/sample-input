@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --gpus=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+##SBATCH --mem=0
+#SBATCH --time=336:00:00
+#SBATCH --job-name=regression
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --partition=ials-gpu
+#######################################################################
+source /etc/profile
+ulimit -s unlimited
+module add miniconda/4.11.0
+eval "$(conda shell.bash hook)"
+conda activate zeonet
+#######################################################################
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+source sub-zeonet.script
+
+exit 0

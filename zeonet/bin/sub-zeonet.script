@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+config="CONFIG"
+
+if [ ! -f "$config" ]; then
+    echo "Error: File $config not found."
+    exit 1
+fi
+
+source "$config"
+export PYTHONPATH="../bin${PYTHONPATH:+:$PYTHONPATH}"
+srun --unbuffered python ../bin/train.py \
+                        --epochs $EPOCHS \
+                        --batch_size $BATCHSIZE \
+                        --lr $LR \
+                        --optimizer ${OPTIMIZER} \
+                        --save_dir . \
+                        --model ${MODEL} \
+                        --model_hp $MODELHP \
+                        --dset_root ${DSETROOT} \
+                        --grid_resolution $GRIDRESOLUTION \
+                        --grid_size $GRIDSIZE \
