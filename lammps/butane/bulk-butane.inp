@@ -1,0 +1,14 @@
+tolerance 2.0
+
+output bulk-butane.pdb
+seed -1
+filetype pdb
+avoid_overlap yes
+nloop 1000
+add_box_sides 2
+randominitialpoint
+
+structure butane.pdb
+    number 160
+    inside box 0. 0. 0. 28. 28. 28.
+end structure

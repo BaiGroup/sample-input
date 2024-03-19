@@ -31,7 +31,7 @@ thermo 1000
 thermo_style custom step etotal ke temp pe epair emol ebond eangle edihed eimp evdwl ecoul elong etail press vol pxx pyy pzz pxy pxz pyz
 thermo_modify norm no flush no line multi
 
-dump movie sorbate custom 500 movie.dat id mol type xu yu zu
+dump movie sorbate custom 500 movie.lammpstrj id mol type xu yu zu
 #dump_modify movie scale no
 
 restart 5000 restart.1 restart.2

@@ -1,0 +1,16 @@
+REMARK   4      COMPLIES WITH FORMAT V. 3.0, 1-DEC-2006
+REMARK 888
+REMARK 888 WRITTEN BY MAESTRO (A PRODUCT OF SCHRODINGER, LLC)
+TITLE     CO2
+MODEL        1
+HETATM    1  C1  UNK     1       0.123  -1.428   1.430  1.00  0.00           C  
+HETATM    2  O1  UNK     1       0.253  -0.533   0.701  1.00  0.00           O  
+HETATM    3  O2  UNK     1      -0.007  -2.322   2.159  1.00  0.00           O  
+CONECT    1    2    3
+CONECT    1    2    3
+CONECT    2    1
+CONECT    2    1
+CONECT    3    1
+CONECT    3    1
+ENDMDL
+END   
