@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
+#SBATCH --cpus-per-task=1
+##SBATCH --mem=0
+#SBATCH --time=96:00:00
+#SBATCH --job-name=name
+#SBATCH --output stdout.%j
+#SBATCH --error stderr.%j
+#SBATCH --qos=regular
+
+#######################################################################
+module load PrgEnv-intel
+MPIRUN='srun --cpu_bind=cores -n'
+BASEDIR="/global/homes/j/jtapia/tools/lammps/intel-impi-mkl"
+
+export PATH="$BASEDIR/bin:$PATH"
+export LD_LIBRARY_PATH="$BASEDIR/lib64:$LD_LIBRARY_PATH"
+PROG="$BASEDIR/bin/lmp"
+
+sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
+asset_dir=$(dirname "$sub_script")
+source $asset_dir/util-slurm.sh
+source sub-lammps.script
+
+exit 0

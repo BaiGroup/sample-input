@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+#######################################################################
+run_lammps() {
+    local FCUR=$1
+    echo "$FCUR: " >> $FILELOG
+    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG -k on g $ngpuperjob -sf kk -pk kokkos cuda/aware on neigh half newton on comm device kspace on -echo screen -log none -screen screen -suffix opt -in main.lmp || exit -1
+    cp -f restart.2 restart
+    mv -f restart.2 restart.$FCUR
+    [ -e screen ] && mv -f screen screen.$FCUR
+    [ -e movie.lammpstrj ] && mv -f movie.lammpstrj movie.$FCUR.lammpstrj
+    [ -e movie.lammpstrj.xtc ] && mv -f movie.lammpstrj.xtc movie.$FCUR.lammpstrj.xtc
+    [ -e energy.dat ] && mv -f energy.dat energy.$FCUR
+    [ -e msd.dat ] && mv -f msd.dat msd.$FCUR
+    [ -e rdf.dat ] && mv -f rdf.dat rdf.$FCUR
+}
+
+get_next_backup() {
+    local _prefix="restart.$1"
+    local _imax=0
+    local _i
+    for f in "${_prefix}"*; do
+        if [ -e "$f" ]; then
+            _i="${f/${_prefix}/}"
+            [ "$_i" -gt "$_imax" ] && _imax="$_i"
+        fi
+    done
+    echo $_imax
+}
+#######################################################################
+if [ -e 'jobs' ]; then
+    for stage in $(cat jobs); do
+        run_lammps $stage
+    done
+else
+    for stage in prod equil; do
+        i=$(get_next_backup "$stage")
+        [ "$i" -ne 0 ] && break
+    done
+    run_lammps "${stage}${i}"
+fi
