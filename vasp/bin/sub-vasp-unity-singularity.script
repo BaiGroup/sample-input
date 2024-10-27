@@ -14,7 +14,7 @@
 source /etc/profile
 ulimit -s unlimited
 [ -d '/work/pi_pengbai_umass_edu/unitymodules' ] && module use --append /work/pi_pengbai_umass_edu/unitymodules
-module add singularity/3.7.0 openmpi/4.1.0
+module add apptainer/latest openmpi/4.1.6
 
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")
@@ -31,7 +31,7 @@ if [ $ngpupernode -eq 0 ]; then
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
 
-mpirun -np \$1 singularity exec --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
+mpirun -np \$1 apptainer exec --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
 EOF
 else
   # GPU-enabled executable
@@ -46,7 +46,7 @@ export OMP_NUM_THREADS=\$nprocpergpu
 export OMP_STACKSIZE=512m
 export OMP_PLACES=cores
 export OMP_PROC_BIND=close
-mpirun -np $ngpuperjob --map-by socket --bind-to core singularity exec --nv --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
+mpirun -np $ngpuperjob --map-by socket --bind-to core apptainer exec --nv --bind $TMP,/work/$USER,/work/pi_pengbai_umass_edu $SINGULARITY_IMAGE "\${@:2}"
 EOF
 fi
 
