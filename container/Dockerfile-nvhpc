@@ -1,0 +1,18 @@
+FROM ubuntu:20.04
+
+RUN apt-get -qy update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get -qy install --no-install-recommends python3 python3-future make cmake mpich libmpich-dev && \
+    apt-get -qy clean
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -qy install --no-install-recommends curl ca-certificates && \
+    apt-get -qy clean
+
+RUN curl -s -O https://developer.download.nvidia.com/hpc-sdk/20.11/nvhpc-20-11_20.11_amd64.deb && \
+    curl -s -O https://developer.download.nvidia.com/hpc-sdk/20.11/nvhpc-2020_20.11_amd64.deb && \
+    apt-get -qy install ./nvhpc-20-11_20.11_amd64.deb ./nvhpc-2020_20.11_amd64.deb && \
+    rm -f ./nvhpc-20-11_20.11_amd64.deb ./nvhpc-2020_20.11_amd64.deb && \
+    apt-get -qy clean
+
+COPY ["run.sh", "/"]
+
+ENTRYPOINT ["/run.sh"]

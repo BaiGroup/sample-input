@@ -1,0 +1,12 @@
+FROM ubuntu:20.04
+
+RUN apt-get -qy update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get -qy install --no-install-recommends python3 python3-future make cmake mpich libmpich-dev && \
+    apt-get -qy clean
+
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -qy install --no-install-recommends gcovr doxygen gfortran && \
+    apt-get -qy clean
+
+COPY ["run.sh", "/"]
+
+ENTRYPOINT ["/run.sh"]
