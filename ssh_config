@@ -23,6 +23,7 @@ Host comet
 Host expanse
   Hostname login.expanse.sdsc.edu
   User CHANGE_THIS
+  ControlPersist 168h
 Host *.sdsc.edu
   User CHANGE_THIS
 Host darwin darwin-storage
