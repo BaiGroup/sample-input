@@ -209,7 +209,7 @@ targets:
     constraint: intel6126,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
     mem_per_cpu: 16095
-  unity-40C: # cpu[013-025]
+  unity-40C: # cpu[009-021]
     host: unity
     scheduler: slurm
     skip_pingback: True
@@ -218,6 +218,42 @@ targets:
     constraint: intel6148,avx512,intel,skylake_avx512,x86_64_v4,x86_64
     time: 24
     mem_per_cpu: 4800
+  unity-EPYC7543-64C: # cpu[031-044]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: cpu
+    constraint: amd,amd7543,x86_64,x86_64_v2,x86_64_v3,zen3
+    time: 24
+    mem_per_cpu: 8050
+  unity-EPYC7502-64C: # cpu[045-048]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 64
+    queue: cpu
+    constraint: amd,amd7502,ib,x86_64,x86_64_v2,x86_64_v3,zen2
+    time: 24
+    mem_per_cpu: 8050
+  unity-128C: # cpu[049-068]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 128
+    queue: cpu
+    constraint: amd,amd7763,ib,x86_64,x86_64_v2,x86_64_v3,zen3
+    time: 24
+    mem_per_cpu: 8050
+  unity-192C: # cpu[069-078]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 192
+    queue: cpu
+    constraint: amd,amd9654,avx512,ib,x86_64,x86_64_v2,x86_64_v3,x86_64_v4,zen4
+    time: 24
+    mem_per_cpu: 8050
   unity-preempt-24C: # ceewater-cpu[001-007]
     host: unity
     scheduler: slurm
@@ -293,6 +329,56 @@ targets:
     constraint: intel6140,avx512,v100,intel,skylake_avx512,x86_64_v4,x86_64,sm_52,sm_61,sm_70,vram8,vram11,vram12,vram16
     time: 24
     mem_per_cpu: 5330
+  unity-32C-3G: # gpu[005-007]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    gpu: v100:3
+    queue: gpu
+    constraint: avx512,fp64,ib,intel,intel6130,skylake_avx512,sm_52,sm_61,sm_70,v100,vram8,vram11,vram12,vram16,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 24
+    mem_per_cpu: 5980
+  unity-32C-4G-A40: # gpu[008-009]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    gpu: a40:4
+    queue: gpu
+    constraint: a40,avx512,ib,icelake,intel,intel6326,sm_52,sm_61,sm_70,sm_75,sm_80,sm_86,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 24
+    mem_per_cpu: 16090
+  unity-36C-4G: # gpu[011-012]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 36
+    gpu: v100:4
+    queue: gpu
+    constraint: avx512,cascadelake,fp64,intel,intel6240,sm_52,sm_61,sm_70,v100,vram8,vram11,vram12,vram16,vram23,vram32,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 24
+    mem_per_cpu: 10690
+  unity-112C-8G: # gpu[022-024]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 112
+    gpu: a100:8
+    queue: gpu
+    constraint: a100,a100-80g,avx512,bf16,fp64,ib,intel,intel8480,sapphirerapids,sm_52,sm_61,sm_70,sm_75,sm_80,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48,vram80,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 24
+    mem_per_cpu: 18420
+  unity-32C-4G-L: # gpu[025-034]
+    host: unity
+    scheduler: slurm
+    skip_pingback: True
+    cpus_per_node: 32
+    gpu: l40s:4
+    queue: gpu
+    constraint: avx512,bf16,ib,icelake,intel,intel6526y,l40s,sm_52,sm_61,sm_70,sm_75,sm_80,sm_86,sm_87,sm_89,vram8,vram11,vram12,vram16,vram23,vram32,vram40,vram48,x86_64,x86_64_v2,x86_64_v3,x86_64_v4
+    time: 24
+    mem_per_cpu: 16090
   unity-24C-8G: # ials-gpu[001-033]
     host: unity
     scheduler: slurm
@@ -313,7 +399,7 @@ targets:
     constraint: amd1900x,2080,amd,zen,x86_64_v3,x86_64,sm_52,sm_61,sm_70,sm_75,vram8
     time: 168
     mem_per_cpu: 4002
-  unity-32C-4G: # ece-gpu[001-002]
+  unity-32C-4G-A100: # ece-gpu[001-002]
     host: unity
     scheduler: slurm
     skip_pingback: True
