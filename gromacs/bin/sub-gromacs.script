@@ -4,9 +4,22 @@
 run_gromacs() {
     local FCUR=$1
     echo "$FCUR: " >> $FILELOG
-    #export OMP_NUM_THREADS=$nprocpernode
-    #/usr/bin/time -ao $FILELOG $MPIRUN $nnodeperjob $PROG mdrun -ntomp $nprocpernode -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
-    /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG mdrun -ntomp 1 -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+
+    [ -z "$nthreadperrank" ] && nthreadperrank=1  # choose according to benchmark results
+    # calculate MPI ranks based on total cores requested and OpenMP threads
+    while [ $((nprocperjob%nthreadperrank)) -ne 0 ]; do
+      ((nthreadperrank--))
+    done
+    nrankperjob=$((nprocperjob/nthreadperrank))
+
+    if [ $ngpupernode -eq 0 ]; then
+        # CPU job
+        /usr/bin/time -ao $FILELOG $MPIRUN $nrankperjob $PROG mdrun -ntomp $nthreadperrank -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+    else
+        # GPU job, using thread MPI
+        [ "$nrankperjob" -gt 1 ] && options="-ntmpi $nrankperjob -npme 1"
+        /usr/bin/time -ao $FILELOG $MPIRUN $nprocperjob $PROG mdrun $options -ntomp $nthreadperrank -nb gpu -pme gpu -bonded gpu -deffnm $FCUR -cpi state.cpt -cpt 15 2>$FCUR.err 1>$FCUR.out || exit -1
+    fi
 }
 
 get_latest_tpr() {
