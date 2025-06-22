@@ -27,7 +27,7 @@ if [ $ngpupernode -eq 0 ]; then
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
 
-srun -c 1 --cpu_bind=cores --mpi=pmi2 -n \$1 singularity exec --bind /delta,/scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
+srun -c 1 --cpu_bind=cores --mpi=pmi2 -n \$1 singularity exec --bind /scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
 EOF
 else
   # GPU-enabled executable
@@ -35,7 +35,7 @@ else
   cat << EOF > $MPIRUN
 #!/usr/bin/env bash
 
-srun -c \$1 --cpu_bind=cores --mpi=pmi2 -n 1 singularity exec --nv --bind /delta,/scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
+srun -c \$1 --cpu_bind=cores --mpi=pmi2 -n 1 singularity exec --nv --bind /scratch,/taiga/nsf/delta/bbwx $SINGULARITY_IMAGE "\${@:2}"
 EOF
 fi
 
