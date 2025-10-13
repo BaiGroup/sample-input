@@ -13,9 +13,9 @@
 #######################################################################
 source /etc/profile
 ulimit -s unlimited
-module add miniconda/4.11.0
+module add conda/latest
 eval "$(conda shell.bash hook)"
-conda activate zeonet
+conda activate zeonet121
 #######################################################################
 sub_script=$(scontrol show job $SLURM_JOB_ID | gawk '/Command=/{split($1,sf,"="); print sf[2]}')
 asset_dir=$(dirname "$sub_script")
